@@ -1,17 +1,12 @@
-// disciplinaService.js
-// NOTA: O backend possui a entidade Disciplina mas o controller ainda está vazio (stub).
-// Mock mínimo e coerente com CC e EC do Insper.
-
 import api from './api';
+import { buildPageParams, encodePath, normalizeList, normalizePage } from './serviceUtils';
 
 const MOCK_DISCIPLINAS = [
-  // Ciência da Computação (cursoId: 1)
-  { id: 1, cursoId: 1, nome: 'Algoritmos e Estruturas de Dados', descricao: 'Fundamentos de algoritmos, complexidade e estruturas como árvores, grafos e tabelas hash.', semestre: 2, docenteEmail: null },
+  { id: 1, cursoId: 1, nome: 'Algoritmos e Estruturas de Dados', descricao: 'Fundamentos de algoritmos, complexidade e estruturas de dados.', semestre: 2, docenteEmail: null },
   { id: 2, cursoId: 1, nome: 'Sistemas Operacionais', descricao: 'Processos, memória, sistemas de arquivos e segurança em SOs modernos.', semestre: 4, docenteEmail: null },
   { id: 3, cursoId: 1, nome: 'Inteligência Artificial', descricao: 'Busca, representação do conhecimento, aprendizado de máquina e redes neurais.', semestre: 6, docenteEmail: null },
   { id: 4, cursoId: 1, nome: 'Engenharia de Software', descricao: 'Metodologias ágeis, arquitetura de software, testes e qualidade.', semestre: 5, docenteEmail: null },
   { id: 5, cursoId: 1, nome: 'Banco de Dados', descricao: 'Modelagem relacional, SQL, NoSQL e otimização de consultas.', semestre: 3, docenteEmail: null },
-  // Engenharia da Computação (cursoId: 2)
   { id: 6, cursoId: 2, nome: 'Eletrônica Digital', descricao: 'Circuitos combinacionais, sequenciais, FPGAs e lógica programável.', semestre: 2, docenteEmail: null },
   { id: 7, cursoId: 2, nome: 'Sistemas Embarcados', descricao: 'Microcontroladores, RTOS, interfaces de hardware e programação de baixo nível.', semestre: 5, docenteEmail: null },
   { id: 8, cursoId: 2, nome: 'Redes de Computadores', descricao: 'Modelos OSI/TCP-IP, protocolos, segurança e infraestrutura de redes.', semestre: 4, docenteEmail: null },
@@ -22,30 +17,60 @@ const MOCK_DISCIPLINAS = [
 export const disciplinaService = {
   async list(params = {}) {
     try {
-      const response = await api.get('/disciplina', { params });
-      const data = response.data;
-      return Array.isArray(data) ? data : data.content ?? MOCK_DISCIPLINAS;
+      const response = await api.get('/disciplina', {
+        params: buildPageParams(params),
+      });
+      return normalizeList(response.data, MOCK_DISCIPLINAS);
     } catch {
       return MOCK_DISCIPLINAS;
     }
   },
 
+  async listPage(page = 0, size = 20, sort) {
+    try {
+      const response = await api.get('/disciplina', {
+        params: buildPageParams(page, size, sort),
+      });
+      return normalizePage(response.data, MOCK_DISCIPLINAS);
+    } catch {
+      return normalizePage(null, MOCK_DISCIPLINAS);
+    }
+  },
+
   async listByCurso(cursoId) {
     try {
-      const response = await api.get(`/disciplina?cursoId=${cursoId}`);
-      const data = response.data;
-      return Array.isArray(data) ? data : data.content ?? MOCK_DISCIPLINAS.filter((d) => d.cursoId === Number(cursoId));
+      const response = await api.get('/disciplina', {
+        params: buildPageParams({ cursoId }),
+      });
+      const items = normalizeList(response.data);
+      return items.length > 0
+        ? items
+        : MOCK_DISCIPLINAS.filter((disciplina) => disciplina.cursoId === Number(cursoId));
     } catch {
-      return MOCK_DISCIPLINAS.filter((d) => d.cursoId === Number(cursoId));
+      return MOCK_DISCIPLINAS.filter((disciplina) => disciplina.cursoId === Number(cursoId));
     }
   },
 
   async getById(id) {
     try {
-      const response = await api.get(`/disciplina/${id}`);
+      const response = await api.get(`/disciplina/${encodePath(id)}`);
       return response.data;
     } catch {
-      return MOCK_DISCIPLINAS.find((d) => d.id === Number(id)) ?? null;
+      return MOCK_DISCIPLINAS.find((disciplina) => disciplina.id === Number(id)) ?? null;
     }
+  },
+
+  async save(dto) {
+    const response = await api.post('/disciplina', dto);
+    return response.data;
+  },
+
+  async update(id, dto) {
+    const response = await api.put(`/disciplina/${encodePath(id)}`, dto);
+    return response.data;
+  },
+
+  async deleteById(id) {
+    await api.delete(`/disciplina/${encodePath(id)}`);
   },
 };

@@ -1,14 +1,35 @@
-// favoritoService.js
-// NOTA: Controller ainda está vazio (stub). Services preparados para futura integração.
-
 import api from './api';
+import { buildPageParams, encodePath, normalizeList, normalizePage } from './serviceUtils';
 
 export const favoritoService = {
-  async listByUsuario(usuarioEmail) {
+  async list(params = {}) {
     try {
-      const response = await api.get(`/favorito?usuarioEmail=${usuarioEmail}`);
-      const data = response.data;
-      return Array.isArray(data) ? data : data.content ?? [];
+      const response = await api.get('/favorito', {
+        params: buildPageParams(params),
+      });
+      return normalizeList(response.data);
+    } catch {
+      return [];
+    }
+  },
+
+  async listPage(page = 0, size = 20, sort) {
+    try {
+      const response = await api.get('/favorito', {
+        params: buildPageParams(page, size, sort),
+      });
+      return normalizePage(response.data);
+    } catch {
+      return normalizePage(null);
+    }
+  },
+
+  async listByUsuario(emailUsuario, page = 0, size = 20) {
+    try {
+      const response = await api.get('/favorito', {
+        params: buildPageParams({ page, size, emailUsuario, usuarioEmail: emailUsuario }),
+      });
+      return normalizeList(response.data);
     } catch {
       return [];
     }
@@ -20,6 +41,6 @@ export const favoritoService = {
   },
 
   async deleteById(id) {
-    await api.delete(`/favorito/${id}`);
+    await api.delete(`/favorito/${encodePath(id)}`);
   },
 };

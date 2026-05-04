@@ -1,26 +1,21 @@
-// docenteService.js
-// Endpoint real: GET /docente (paginado), GET /docente/{email}, POST /docente, PATCH /docente/{email}
-
 import api from './api';
+import { buildPageParams, encodePath, normalizePage } from './serviceUtils';
 
 export const docenteService = {
-  async list(page = 0, size = 20) {
+  async list(page = 0, size = 20, sort) {
     try {
-      const response = await api.get('/docente', { params: { page, size } });
-      const data = response.data;
-      // Spring Page
-      if (data.content !== undefined) {
-        return { items: data.content, totalPages: data.totalPages, totalElements: data.totalElements };
-      }
-      return { items: Array.isArray(data) ? data : [], totalPages: 1, totalElements: 0 };
+      const response = await api.get('/docente', {
+        params: buildPageParams(page, size, sort),
+      });
+      return normalizePage(response.data);
     } catch {
-      return { items: [], totalPages: 0, totalElements: 0 };
+      return normalizePage(null);
     }
   },
 
   async getByEmail(email) {
     try {
-      const response = await api.get(`/docente/${email}`);
+      const response = await api.get(`/docente/${encodePath(email)}`);
       return response.data;
     } catch {
       return null;
@@ -33,7 +28,11 @@ export const docenteService = {
   },
 
   async update(email, dto) {
-    const response = await api.patch(`/docente/${email}`, dto);
+    const response = await api.patch(`/docente/${encodePath(email)}`, dto);
     return response.data;
+  },
+
+  async deleteById(id) {
+    await api.delete(`/docente/${encodePath(id)}`);
   },
 };
