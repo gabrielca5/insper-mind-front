@@ -8,6 +8,8 @@ import { Docentes } from './pages/Docentes';
 import { DocenteDetalhe } from './pages/DocenteDetalhe';
 import { Usuarios } from './pages/Usuarios';
 import { UsuarioDetalhe } from './pages/UsuarioDetalhe';
+import { ApiRoutes } from './pages/ApiRoutes';
+import { Conta } from './pages/Conta';
 import { NotFound } from './pages/NotFound';
 
 export default function App() {
@@ -24,6 +26,10 @@ export default function App() {
           <Route path="/docentes/:email"         element={<DocenteDetalhe />} />
           <Route path="/usuarios"                element={<Usuarios />} />
           <Route path="/usuarios/:email"         element={<UsuarioDetalhe />} />
+          <Route path="/login"                   element={<Conta />} />
+          <Route path="/cadastro"                element={<Conta />} />
+          <Route path="/rotas"                   element={<ApiRoutes />} />
+          <Route path="/rotas/:resourceKey"      element={<ApiRoutes />} />
           <Route path="*"                        element={<NotFound />} />
         </Routes>
       </main>

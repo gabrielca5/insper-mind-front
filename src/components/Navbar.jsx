@@ -14,6 +14,8 @@ export function Navbar() {
           <li><NavLink to="/materiais" className={({ isActive }) => isActive ? styles.active : ''}>Materiais</NavLink></li>
           <li><NavLink to="/docentes" className={({ isActive }) => isActive ? styles.active : ''}>Docentes</NavLink></li>
           <li><NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ''}>Usuários</NavLink></li>
+          <li><NavLink to="/rotas" className={({ isActive }) => isActive ? styles.active : ''}>Rotas</NavLink></li>
+          <li><NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>Conta</NavLink></li>
         </ul>
       </div>
     </nav>
