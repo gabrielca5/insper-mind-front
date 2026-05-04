@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
 import { CursoDetalhe } from './pages/CursoDetalhe';
@@ -12,7 +12,7 @@ import { NotFound } from './pages/NotFound';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Navbar />
       <main>
         <Routes>
@@ -27,6 +27,6 @@ export default function App() {
           <Route path="*"                        element={<NotFound />} />
         </Routes>
       </main>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
