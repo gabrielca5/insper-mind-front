@@ -45,7 +45,7 @@ export function Usuarios() {
           <EmptyState
             icon="👥"
             title="Nenhum usuário cadastrado"
-            subtitle="A API não retornou usuários ainda. Cadastre um via POST /usuario."
+            subtitle="A API não retornou usuários ainda."
           />
         ) : (
           <>
