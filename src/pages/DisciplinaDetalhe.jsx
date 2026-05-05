@@ -60,7 +60,7 @@ export function DisciplinaDetalhe() {
         label: tipo,
       })),
     },
-    { name: 'cursoId', label: 'Curso ID', type: 'number', required: true, defaultValue: disciplina?.cursoId ?? 1 },
+    { name: 'disciplinaId', type: 'hidden', valueType: 'number', defaultValue: Number(id) },
     {
       name: 'emailUsuario',
       label: 'Email do usuário',

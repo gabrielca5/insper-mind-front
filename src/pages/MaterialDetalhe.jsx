@@ -5,15 +5,23 @@ import { FormModal } from '../components/FormModal';
 import { LoadingSpinner, EmptyState } from '../components/UI';
 import { useAuth } from '../hooks/useAuth';
 import { comentarioService } from '../services/comentarioService';
-import { cursoService } from '../services/cursoService';
+import { disciplinaService } from '../services/disciplinaService';
 import { favoritoService } from '../services/favoritoService';
 import { materialService, SUPPORTED_MATERIAL_TYPES } from '../services/materialService';
 import styles from './MaterialDetalhe.module.css';
 
-function materialFields(cursos, material = {}) {
-  const cursoOptions = cursos.map((curso) => ({
-    value: curso.id,
-    label: curso.nome,
+function disciplinaOptionLabel(disciplina) {
+  return [
+    disciplina.nome,
+    disciplina.nomeCurso,
+    disciplina.nomeSemestre,
+  ].filter(Boolean).join(' · ');
+}
+
+function materialFields(disciplinas, material = {}) {
+  const disciplinaOptions = disciplinas.map((disciplina) => ({
+    value: disciplina.id,
+    label: disciplinaOptionLabel(disciplina),
   }));
 
   return [
@@ -29,24 +37,40 @@ function materialFields(cursos, material = {}) {
       options: SUPPORTED_MATERIAL_TYPES.map((tipo) => ({ value: tipo, label: tipo })),
     },
     {
-      name: 'cursoId',
-      label: 'Curso',
+      name: 'disciplinaId',
+      label: 'Disciplina',
       type: 'select',
       valueType: 'number',
       required: true,
-      defaultValue: material.cursoId ?? cursoOptions[0]?.value ?? '',
-      options: cursoOptions,
+      defaultValue: material.disciplinaId ?? disciplinaOptions[0]?.value ?? '',
+      options: disciplinaOptions,
     },
     { name: 'ativo', label: 'Ativo', type: 'checkbox', defaultValue: material.ativo ?? true },
   ];
 }
 
-function commentFields(auth, materialId, comentario = {}) {
+function commentFields(auth, material = {}, comentario = {}) {
+  const materialId = Number(material.id);
+  const disciplinaId = Number(material.disciplinaId);
+
   return [
     {
       name: 'materialId',
-      type: 'hidden',
-      defaultValue: Number(materialId),
+      hidden: true,
+      valueType: 'number',
+      defaultValue: Number.isFinite(materialId) ? materialId : '',
+    },
+    {
+      name: 'idMaterial',
+      hidden: true,
+      valueType: 'number',
+      defaultValue: Number.isFinite(materialId) ? materialId : '',
+    },
+    {
+      name: 'idDisciplina',
+      hidden: true,
+      valueType: 'number',
+      defaultValue: Number.isFinite(disciplinaId) ? disciplinaId : '',
     },
     {
       name: 'comentario',
@@ -85,7 +109,7 @@ export function MaterialDetalhe() {
   const auth = useAuth();
   const [material, setMaterial] = useState(null);
   const [comentarios, setComentarios] = useState([]);
-  const [cursos, setCursos] = useState([]);
+  const [disciplinas, setDisciplinas] = useState([]);
   const [favoriteId, setFavoriteId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -94,15 +118,15 @@ export function MaterialDetalhe() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [mat, comments, cursoData] = await Promise.all([
+    const [mat, comments, disciplinaData] = await Promise.all([
       materialService.getById(id),
       comentarioService.listByMaterial(id),
-      cursoService.list(),
+      disciplinaService.listPage(0, 250, 'nome,asc'),
     ]);
 
     setMaterial(mat);
     setComentarios(comments ?? []);
-    setCursos(cursoData);
+    setDisciplinas(disciplinaData.items ?? []);
 
     if (auth?.email) {
       const favorites = await favoritoService.listByUsuario(auth.email);
@@ -119,9 +143,10 @@ export function MaterialDetalhe() {
     loadData();
   }, [loadData]);
 
-  const editMaterialFields = useMemo(() => materialFields(cursos, material ?? {}), [cursos, material]);
-  const newCommentFields = useMemo(() => commentFields(auth, id), [auth, id]);
+  const editMaterialFields = useMemo(() => materialFields(disciplinas, material ?? {}), [disciplinas, material]);
+  const newCommentFields = useMemo(() => commentFields(auth, material ?? { id }), [auth, id, material]);
   const updateCommentFields = useMemo(() => editCommentFields(editingComment ?? {}), [editingComment]);
+  const canComment = Boolean(auth?.email && material?.id && material?.disciplinaId);
 
   const handleFavorite = async () => {
     if (!auth?.email || !material?.id) {
@@ -165,7 +190,12 @@ export function MaterialDetalhe() {
   };
 
   const handleCreateComment = async (payload) => {
-    const comentario = await comentarioService.save(payload);
+    const comentario = await comentarioService.save({
+      ...payload,
+      materialId: material.id,
+      idMaterial: material.id,
+      idDisciplina: material.disciplinaId,
+    });
     setMessage('Comentário publicado.');
     await loadData();
     return comentario;
@@ -202,6 +232,7 @@ export function MaterialDetalhe() {
         <Breadcrumb items={[
           { label: 'Painel', to: '/' },
           { label: 'Materiais', to: '/materiais' },
+          ...(material.disciplinaId ? [{ label: material.nomeDisciplina ?? 'Disciplina', to: `/disciplinas/${material.disciplinaId}` }] : []),
           { label: material.titulo ?? 'Material' },
         ]} />
 
@@ -209,6 +240,9 @@ export function MaterialDetalhe() {
           <div>
             <span className={styles.badge}>{material.tipo ?? 'Material'}</span>
             <h1 className={styles.title}>{material.titulo}</h1>
+            {material.nomeDisciplina && (
+              <p className={styles.metaLine}>{material.nomeDisciplina}</p>
+            )}
             {material.descricao && <p className={styles.desc}>{material.descricao}</p>}
           </div>
           <div className={styles.actions}>
@@ -239,8 +273,8 @@ export function MaterialDetalhe() {
               triggerLabel="Publicar comentário"
               submitLabel="POST /comentario"
               fields={newCommentFields}
-              disabled={!auth?.email}
-              disabledTitle="Faça login para comentar"
+              disabled={!canComment}
+              disabledTitle={!auth?.email ? 'Faça login para comentar' : 'Vincule este material a uma disciplina antes de comentar'}
               onSubmit={handleCreateComment}
             />
           </div>

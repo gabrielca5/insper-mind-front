@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { materialService, SUPPORTED_MATERIAL_TYPES } from '../services/materialService';
-import { cursoService } from '../services/cursoService';
+import { disciplinaService } from '../services/disciplinaService';
 import { favoritoService } from '../services/favoritoService';
 import { readAuth } from '../services/authStorage';
 import { useAuth } from '../hooks/useAuth';
@@ -13,10 +13,18 @@ import styles from './Materiais.module.css';
 
 const TIPOS = ['TODOS', ...SUPPORTED_MATERIAL_TYPES];
 
-function materialFields(auth, cursos, material = {}) {
-  const cursoOptions = cursos.map((curso) => ({
-    value: curso.id,
-    label: curso.nome,
+function disciplinaOptionLabel(disciplina) {
+  return [
+    disciplina.nome,
+    disciplina.nomeCurso,
+    disciplina.nomeSemestre,
+  ].filter(Boolean).join(' · ');
+}
+
+function materialFields(auth, disciplinas, material = {}) {
+  const disciplinaOptions = disciplinas.map((disciplina) => ({
+    value: disciplina.id,
+    label: disciplinaOptionLabel(disciplina),
   }));
 
   return [
@@ -32,13 +40,13 @@ function materialFields(auth, cursos, material = {}) {
       options: SUPPORTED_MATERIAL_TYPES.map((tipo) => ({ value: tipo, label: tipo })),
     },
     {
-      name: 'cursoId',
-      label: 'Curso',
+      name: 'disciplinaId',
+      label: 'Disciplina',
       type: 'select',
       valueType: 'number',
       required: true,
-      defaultValue: material.cursoId ?? cursoOptions[0]?.value ?? '',
-      options: cursoOptions,
+      defaultValue: material.disciplinaId ?? disciplinaOptions[0]?.value ?? '',
+      options: disciplinaOptions,
     },
     {
       name: 'emailUsuario',
@@ -51,14 +59,14 @@ function materialFields(auth, cursos, material = {}) {
   ];
 }
 
-function editMaterialFields(cursos, material = {}) {
-  return materialFields(null, cursos, material).filter((field) => field.name !== 'emailUsuario');
+function editMaterialFields(disciplinas, material = {}) {
+  return materialFields(null, disciplinas, material).filter((field) => field.name !== 'emailUsuario');
 }
 
 export function Materiais() {
   const auth = useAuth();
   const [materiais, setMateriais] = useState([]);
-  const [cursos, setCursos] = useState([]);
+  const [disciplinas, setDisciplinas] = useState([]);
   const [favoritos, setFavoritos] = useState({});
   const [filtro, setFiltro] = useState('TODOS');
   const [busca, setBusca] = useState('');
@@ -88,12 +96,12 @@ export function Materiais() {
 
   const loadMateriais = useCallback(async () => {
     setLoading(true);
-    const [materialData, cursoData] = await Promise.all([
+    const [materialData, disciplinaData] = await Promise.all([
       materialService.list(),
-      cursoService.list(),
+      disciplinaService.listPage(0, 250, 'nome,asc'),
     ]);
     setMateriais(materialData ?? []);
-    setCursos(cursoData ?? []);
+    setDisciplinas(disciplinaData.items ?? []);
     await loadFavoritos();
     setLoading(false);
   }, [loadFavoritos]);
@@ -116,7 +124,7 @@ export function Materiais() {
           m.titulo,
           m.nome,
           m.descricao,
-          m.nomeCurso,
+          m.nomeDisciplina,
           m.tipo,
         ]
           .filter(Boolean)
@@ -127,10 +135,10 @@ export function Materiais() {
       });
   }, [materiais, filtro, busca]);
 
-  const createFields = useMemo(() => materialFields(auth, cursos), [auth, cursos]);
+  const createFields = useMemo(() => materialFields(auth, disciplinas), [auth, disciplinas]);
   const editFields = useMemo(
-    () => editMaterialFields(cursos, editingMaterial ?? {}),
-    [cursos, editingMaterial]
+    () => editMaterialFields(disciplinas, editingMaterial ?? {}),
+    [disciplinas, editingMaterial]
   );
 
   const handleCreateMaterial = async (payload) => {
@@ -237,7 +245,7 @@ export function Materiais() {
             <input
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
-              placeholder="Buscar por título, curso, tipo..."
+              placeholder="Buscar por titulo, disciplina, tipo..."
               aria-label="Buscar materiais"
             />
           </div>

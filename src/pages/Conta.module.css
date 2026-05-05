@@ -108,7 +108,8 @@
 }
 
 .success,
-.error {
+.error,
+.notice {
   border-radius: 8px;
   padding: 0.7rem 0.85rem;
   font-size: 0.85rem;
@@ -123,6 +124,13 @@
 .error {
   background: var(--danger-surface);
   color: var(--danger-strong);
+  margin: 0 0 1rem;
+}
+
+.notice {
+  background: var(--accent-light);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   margin: 0 0 1rem;
 }
 

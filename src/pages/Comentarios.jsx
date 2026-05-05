@@ -8,6 +8,8 @@ import styles from './Comentarios.module.css';
 
 function createFields(auth) {
   return [
+    { name: 'materialId', label: 'ID do material', type: 'number', valueType: 'number', required: true },
+    { name: 'idDisciplina', label: 'ID da disciplina', type: 'number', valueType: 'number', required: true },
     { name: 'comentario', label: 'Comentário', type: 'textarea', required: true },
     {
       name: 'emailUsuario',
@@ -120,6 +122,7 @@ export function Comentarios() {
               <article key={comentario.id} className={styles.card}>
                 <p className={styles.text}>{comentario.comentario}</p>
                 <p className={styles.meta}>
+                  {comentarioService.getMaterialId(comentario) ? `Material #${comentarioService.getMaterialId(comentario)} · ` : ''}
                   {comentario.nomeUsuario ?? comentario.emailUsuario ?? 'Usuário'} · {comentario.curtidas ?? 0} curtidas
                 </p>
                 <div className={styles.cardActions}>
