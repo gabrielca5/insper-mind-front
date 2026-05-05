@@ -47,7 +47,9 @@ export function MaterialCard({
       <div className={styles.body}>
         <h3 className={styles.title}>{material.titulo ?? material.nome}</h3>
 
-        {material.nomeCurso && <p className={styles.meta}>{material.nomeCurso}</p>}
+        {(material.nomeDisciplina || material.nomeCurso) && (
+          <p className={styles.meta}>{material.nomeDisciplina ?? material.nomeCurso}</p>
+        )}
 
         {material.descricao && <p className={styles.desc}>{material.descricao}</p>}
 

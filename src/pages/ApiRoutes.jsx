@@ -122,7 +122,7 @@ const resources = [
       link: '',
       tipo: TipoMaterial.PDF,
       emailUsuario: '',
-      cursoId: 1,
+      disciplinaId: 1,
     },
     updateLabel: 'ID',
     updateMethod: 'PUT',
@@ -208,6 +208,8 @@ const resources = [
     createTemplate: {
       comentario: '',
       emailUsuario: '',
+      materialId: 1,
+      idDisciplina: 1,
     },
     updateLabel: 'ID',
     updateMethod: 'PUT',

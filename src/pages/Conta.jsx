@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { useAuth } from '../hooks/useAuth';
 import { saveAuth } from '../services/authStorage';
 import { usuarioService } from '../services/usuarioService';
 import styles from './Conta.module.css';
@@ -28,6 +29,8 @@ function getErrorMessage(error) {
 
 export function Conta() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const auth = useAuth();
   const [cadastro, setCadastro] = useState(initialCadastro);
   const [login, setLogin] = useState(initialLogin);
   const [loadingCadastro, setLoadingCadastro] = useState(false);
@@ -35,6 +38,7 @@ export function Conta() {
   const [cadastroMsg, setCadastroMsg] = useState('');
   const [loginMsg, setLoginMsg] = useState('');
   const [error, setError] = useState('');
+  const authNotice = location.state?.authNotice ?? 'Você não está logado. Entre ou crie uma conta para continuar.';
 
   const updateCadastro = (field, value) => {
     setCadastro((current) => ({ ...current, [field]: value }));
@@ -108,6 +112,7 @@ export function Conta() {
           <p className={styles.sub}>Cadastro e login usando as rotas do Swagger.</p>
         </header>
 
+        {!auth?.email && <p className={styles.notice}>{authNotice}</p>}
         {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.grid}>

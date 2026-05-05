@@ -4,6 +4,7 @@ import { AuthGate } from './components/AuthGate';
 import { AdminGate } from './components/AdminGate';
 import { Home } from './pages/Home';
 import { CursoDetalhe } from './pages/CursoDetalhe';
+import { Disciplinas } from './pages/Disciplinas';
 import { DisciplinaDetalhe } from './pages/DisciplinaDetalhe';
 import { Materiais } from './pages/Materiais';
 import { MaterialDetalhe } from './pages/MaterialDetalhe';
@@ -33,6 +34,7 @@ export default function App() {
         <Routes>
           <Route path="/"                        element={<Home />} />
           <Route path="/cursos/:id"              element={protectedPage(<CursoDetalhe />)} />
+          <Route path="/disciplinas"             element={protectedPage(<Disciplinas />)} />
           <Route path="/disciplinas/:id"         element={protectedPage(<DisciplinaDetalhe />)} />
           <Route path="/materiais"               element={protectedPage(<Materiais />)} />
           <Route path="/materiais/:id"           element={protectedPage(<MaterialDetalhe />)} />
