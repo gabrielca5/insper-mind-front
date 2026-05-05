@@ -79,8 +79,8 @@
 }
 
 .primaryBtn {
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--accent-solid);
+  color: var(--accent-contrast);
   box-shadow: var(--shadow-sm);
 }
 
@@ -162,7 +162,7 @@
   justify-content: center;
   gap: 0.2rem;
   padding: 1rem;
-  background: rgba(23, 32, 51, 0.84);
+  background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: inherit;
@@ -171,8 +171,8 @@
 }
 
 .quickLink:hover {
-  background: var(--panel);
-  border-color: rgba(156, 163, 255, 0.35);
+  background: var(--surface);
+  border-color: var(--accent);
   transform: translateY(-1px);
 }
 

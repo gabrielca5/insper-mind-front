@@ -83,6 +83,7 @@ const resources = [
       formulaAvaliacao: '',
       temDelta: false,
       criterioBarreira: '',
+      semestreId: 1,
     },
     updateLabel: 'ID',
     updateMethod: 'PUT',
@@ -92,6 +93,7 @@ const resources = [
       formulaAvaliacao: '',
       temDelta: false,
       criterioBarreira: '',
+      semestreId: 1,
     },
     deleteLabel: 'ID',
     delete: disciplinaService.deleteById,
@@ -151,6 +153,10 @@ const resources = [
     get: eletivaService.getById,
     create: eletivaService.save,
     createTemplate: {
+      nome: '',
+      formulaAvaliacao: '',
+      temDelta: false,
+      criterioBarreira: '',
       cargaHoraria: 80,
       semestreMinimo: '',
       ativo: true,
@@ -159,6 +165,10 @@ const resources = [
     updateMethod: 'PUT',
     update: eletivaService.update,
     updateTemplate: {
+      nome: '',
+      formulaAvaliacao: '',
+      temDelta: false,
+      criterioBarreira: '',
       cargaHoraria: 80,
       semestreMinimo: '',
     },
@@ -201,6 +211,7 @@ const resources = [
     actions: [
       {
         key: 'curtir',
+        hidden: true,
         title: 'Curtir comentário',
         label: 'PATCH /comentario/{id}/curtir',
         keyLabel: 'ID',
@@ -261,7 +272,7 @@ function getOperations(resource) {
     });
   }
 
-  resource.actions?.forEach((action) => {
+  resource.actions?.filter((action) => !action.hidden).forEach((action) => {
     operations.push({
       id: action.key,
       method: action.label.split(' ')[0],
@@ -728,7 +739,7 @@ function ResourceCrud({ resource }) {
             />
           )}
 
-          {resource.actions?.map((action) => {
+          {resource.actions?.filter((action) => !action.hidden).map((action) => {
             const state = actionStates[action.key] ?? {};
 
             if (action.template) {

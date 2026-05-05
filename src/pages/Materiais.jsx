@@ -76,8 +76,11 @@ export function Materiais() {
     const data = await favoritoService.listByUsuario(currentAuth.email);
     const map = {};
     data.forEach((favorito) => {
-      if (favorito.tipoItem === 'MATERIAL' || !favorito.tipoItem) {
-        map[favorito.itemId] = favorito.id;
+      if (favoritoService.getTipoItem(favorito) === 'MATERIAL') {
+        const itemId = favoritoService.getItemId(favorito);
+        if (itemId) {
+          map[itemId] = favorito.id;
+        }
       }
     });
     setFavoritos(map);
@@ -166,7 +169,16 @@ export function Materiais() {
     const favoriteId = favoritos[material.id];
 
     if (favoriteId) {
-      await favoritoService.deleteById(favoriteId);
+      await favoritoService.deleteById(favoriteId, {
+        emailUsuario: auth.email,
+        itemId: material.id,
+        tipoItem: 'MATERIAL',
+      });
+      setFavoritos((current) => {
+        const next = { ...current };
+        delete next[material.id];
+        return next;
+      });
       setMessage('Material removido dos salvos.');
     } else {
       const favorito = await favoritoService.save({
@@ -180,21 +192,6 @@ export function Materiais() {
 
     await loadFavoritos();
   };
-
-  const handleLike = async (material) => {
-    if (!material?.id) return;
-    setMateriais((current) =>
-      current.map((item) =>
-        item.id === material.id
-          ? { ...item, curtidas: (item.curtidas ?? 0) + 1 }
-          : item
-      )
-    );
-    setMessage('Curtida registrada.');
-  };
-
-  const totalCurtidas = materiais.reduce((acc, item) => acc + (item.curtidas ?? 0), 0);
-  const totalSalvos = Object.keys(favoritos).length;
 
   return (
     <div className={styles.page}>
@@ -278,7 +275,6 @@ export function Materiais() {
                 canFavorite={true}
                 canManage={true}
                 onFavorite={handleFavorite}
-                onLike={handleLike}
                 onEdit={() => setEditingMaterial(m)}
                 onDelete={handleDeleteMaterial}
               />

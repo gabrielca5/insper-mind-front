@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Bookmark, ThumbsUp, MessageCircle, Eye, ExternalLink, Edit, Trash2 } from 'lucide-react';
+import { Bookmark, MessageCircle, Eye, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FormModal } from '../components/FormModal';
 import { cursoService } from '../services/cursoService';
@@ -73,6 +73,7 @@ const resources = [
       { name: 'nome', label: 'Nome', required: true },
       { name: 'formulaAvaliacao', label: 'Fórmula de avaliação' },
       { name: 'temDelta', label: 'Tem delta', type: 'checkbox' },
+      { name: 'semestreId', label: 'Semestre ID', type: 'number', required: true, defaultValue: 1 },
       { name: 'criterioBarreira', label: 'Critério de barreira', type: 'textarea' },
     ],
   },
@@ -104,11 +105,19 @@ const resources = [
     deleteField: 'id',
     fields: [
       { name: 'cargaHoraria', label: 'Carga horária', type: 'number', required: true },
+      { name: 'nome', label: 'Nome', required: true },
+      { name: 'formulaAvaliacao', label: 'Formula de avaliacao' },
+      { name: 'temDelta', label: 'Tem delta', type: 'checkbox' },
+      { name: 'criterioBarreira', label: 'Criterio de barreira', type: 'textarea' },
       { name: 'semestreMinimo', label: 'Semestre mínimo', required: true },
       { name: 'ativo', label: 'Ativo', type: 'checkbox', defaultValue: true },
     ],
     updateFields: [
       { name: 'cargaHoraria', label: 'Carga horária', type: 'number', required: true },
+      { name: 'nome', label: 'Nome' },
+      { name: 'formulaAvaliacao', label: 'Formula de avaliacao' },
+      { name: 'temDelta', label: 'Tem delta', type: 'checkbox' },
+      { name: 'criterioBarreira', label: 'Criterio de barreira', type: 'textarea' },
       { name: 'semestreMinimo', label: 'Semestre mínimo', required: true },
     ],
   },
@@ -231,9 +240,6 @@ function AdminSection({ resource }) {
               <div className={styles.galleryActions}>
                 <button className={styles.iconBtn} title="Salvar" aria-label="Salvar">
                   <Bookmark size={18} strokeWidth={2} />
-                </button>
-                <button className={styles.iconBtn} title="Curtir" aria-label="Curtir">
-                  <ThumbsUp size={18} strokeWidth={2} />
                 </button>
                 <button className={styles.iconBtn} title="Comentar" aria-label="Comentar">
                   <MessageCircle size={18} strokeWidth={2} />

@@ -5,6 +5,57 @@ import { buildPageParams, encodePath, normalizeList, normalizePage } from './ser
 const CACHE_RESOURCE = 'comentario';
 const CACHE_SCOPE = `${CACHE_RESOURCE}:`;
 const MUTATION_SCOPES = [CACHE_SCOPE, 'material:'];
+const COMMENT_LIKES_KEY = 'insperMindCommentLikes';
+
+function normalizeId(value) {
+  const id = Number(value);
+  return Number.isFinite(id) && id > 0 ? id : null;
+}
+
+function getLikeOwner(emailUsuario) {
+  return String(emailUsuario || 'anonimo').trim().toLowerCase();
+}
+
+function getStoredCommentLikes() {
+  if (typeof window === 'undefined') return {};
+
+  try {
+    return JSON.parse(window.localStorage.getItem(COMMENT_LIKES_KEY) ?? '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveStoredCommentLikes(likes) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(COMMENT_LIKES_KEY, JSON.stringify(likes));
+  } catch {
+    // Sem localStorage, a API ainda recebe a curtida normalmente.
+  }
+}
+
+function hasStoredCommentLike(commentId, emailUsuario) {
+  const normalizedCommentId = normalizeId(commentId);
+  if (!normalizedCommentId) return false;
+
+  const likes = getStoredCommentLikes();
+  const owner = getLikeOwner(emailUsuario);
+  return (likes[owner] ?? []).some((id) => Number(id) === normalizedCommentId);
+}
+
+function rememberCommentLike(commentId, emailUsuario) {
+  const normalizedCommentId = normalizeId(commentId);
+  if (!normalizedCommentId) return;
+
+  const likes = getStoredCommentLikes();
+  const owner = getLikeOwner(emailUsuario);
+  const ownerLikes = new Set((likes[owner] ?? []).map(Number));
+  ownerLikes.add(normalizedCommentId);
+  likes[owner] = Array.from(ownerLikes);
+  saveStoredCommentLikes(likes);
+}
 
 export const comentarioService = {
   async list(params = {}) {
@@ -83,6 +134,19 @@ export const comentarioService = {
     const response = await api.patch(`/comentario/${encodePath(id)}/curtir`);
     invalidateCache(MUTATION_SCOPES);
     return response.data;
+  },
+
+  hasLiked(id, emailUsuario) {
+    return hasStoredCommentLike(id, emailUsuario);
+  },
+
+  rememberLike(id, emailUsuario) {
+    rememberCommentLike(id, emailUsuario);
+  },
+
+  getLikedIds(emailUsuario) {
+    const likes = getStoredCommentLikes();
+    return new Set((likes[getLikeOwner(emailUsuario)] ?? []).map(Number));
   },
 
   async deleteById(id) {

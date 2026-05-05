@@ -106,7 +106,7 @@ export function MaterialDetalhe() {
 
     if (auth?.email) {
       const favorites = await favoritoService.listByUsuario(auth.email);
-      const favorite = favorites.find((item) => Number(item.itemId) === Number(id));
+      const favorite = favorites.find((item) => Number(favoritoService.getItemId(item)) === Number(id));
       setFavoriteId(favorite?.id ?? null);
     } else {
       setFavoriteId(null);
@@ -130,7 +130,11 @@ export function MaterialDetalhe() {
     }
 
     if (favoriteId) {
-      await favoritoService.deleteById(favoriteId);
+      await favoritoService.deleteById(favoriteId, {
+        emailUsuario: auth.email,
+        itemId: material.id,
+        tipoItem: 'MATERIAL',
+      });
       setFavoriteId(null);
       setMessage('Favorito removido.');
       return;
@@ -165,13 +169,6 @@ export function MaterialDetalhe() {
     setMessage('Comentário publicado.');
     await loadData();
     return comentario;
-  };
-
-  const handleLikeComment = async (comentario) => {
-    const updated = await comentarioService.curtir(comentario.id);
-    setComentarios((current) =>
-      current.map((item) => (item.id === updated.id ? updated : item))
-    );
   };
 
   const handleEditComment = async (payload) => {
@@ -259,9 +256,6 @@ export function MaterialDetalhe() {
                     {comentario.nomeUsuario ?? comentario.emailUsuario ?? 'Usuário'} · {comentario.curtidas ?? 0} curtidas
                   </p>
                   <div className={styles.commentActions}>
-                    <button className={styles.secondaryBtn} type="button" onClick={() => handleLikeComment(comentario)}>
-                      Curtir
-                    </button>
                     <button className={styles.secondaryBtn} type="button" onClick={() => setEditingComment(comentario)} disabled={!auth?.email}>
                       Editar
                     </button>

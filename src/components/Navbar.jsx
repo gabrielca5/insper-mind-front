@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { clearAuth, listenAuth, readAuth } from '../services/authStorage';
 import { listenTheme, readTheme, THEMES, toggleTheme } from '../services/themeStorage';
+import iminLogo from '../img/IminLogo.png';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
@@ -27,7 +28,9 @@ export function Navbar() {
     <nav className={styles.nav}>
       <div className={styles.inner}>
         <NavLink to="/" className={styles.logo}>
-          <span className={styles.logoMark}>IM</span>
+          <span className={styles.logoMark}>
+            <img className={styles.logoImage} src={iminLogo} alt="" />
+          </span>
           <span className={styles.logoText}>Insper<em>Mind</em></span>
         </NavLink>
         <ul className={styles.links}>

@@ -30,7 +30,7 @@
 .iconWrap {
   width: 52px;
   height: 52px;
-  background: rgba(23, 32, 51, 0.88);
+  background: var(--panel-soft);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -79,8 +79,8 @@
   display: inline-flex;
   align-items: center;
   padding: 0.55rem 1.1rem;
-  background: var(--card-accent, var(--accent));
-  color: #fff;
+  background: var(--accent-solid);
+  color: var(--accent-contrast);
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 600;

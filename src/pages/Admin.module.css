@@ -82,8 +82,8 @@
 }
 .iconBtn:hover, .iconBtn:focus {
   border-color: var(--accent);
-  color: #fff;
-  background: var(--accent);
+  color: var(--accent-contrast);
+  background: var(--accent-solid);
   outline: none;
 }
 .iconBtnDanger {
@@ -93,9 +93,9 @@
   background: var(--danger-surface);
 }
 .iconBtnDanger:hover, .iconBtnDanger:focus {
-  border-color: var(--danger);
-  color: #fff;
-  background: var(--danger);
+  border-color: var(--danger-solid);
+  color: var(--danger-contrast);
+  background: var(--danger-solid);
 }
 
 @media (max-width: 900px) {

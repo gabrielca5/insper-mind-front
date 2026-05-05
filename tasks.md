@@ -1,0 +1,3 @@
+- Consertar botão de curtida (não tá atualizando) (está curtindo infinidamente)
+- Aba de favoritos n mostra ID
+- Forms não tá atualizado pros params novos de disciplina e eletiva

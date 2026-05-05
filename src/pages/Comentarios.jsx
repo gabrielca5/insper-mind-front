@@ -64,13 +64,6 @@ export function Comentarios() {
     return result;
   };
 
-  const handleLike = async (comentario) => {
-    const updated = await comentarioService.curtir(comentario.id);
-    setComentarios((current) =>
-      current.map((item) => (item.id === updated.id ? updated : item))
-    );
-  };
-
   const handleEdit = async (payload) => {
     const updated = await comentarioService.update(editing.id, payload);
     setEditing(null);
@@ -130,15 +123,6 @@ export function Comentarios() {
                   {comentario.nomeUsuario ?? comentario.emailUsuario ?? 'Usuário'} · {comentario.curtidas ?? 0} curtidas
                 </p>
                 <div className={styles.cardActions}>
-                  <button
-                    className={styles.secondaryBtn}
-                    type="button"
-                    onClick={() => handleLike(comentario)}
-                    aria-label="Curtir comentário"
-                    title="Curtir comentário"
-                  >
-                    👍
-                  </button>
                   <button className={styles.secondaryBtn} type="button" onClick={() => setEditing(comentario)} disabled={!auth?.email}>
                     Editar
                   </button>

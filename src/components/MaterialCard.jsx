@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import {
   Bookmark,
-  ThumbsUp,
   Eye,
   ExternalLink,
   Edit,
@@ -26,13 +25,11 @@ export function MaterialCard({
   canFavorite = false,
   canManage = false,
   onFavorite,
-  onLike,
   onEdit,
   onDelete,
 }) {
   const icon = materialService.getTipoIcon(material.tipo);
   const label = TIPO_LABELS[material.tipo] ?? material.tipo ?? 'Material';
-  const curtidas = material.curtidas ?? material.likes ?? 0;
 
   return (
     <article className={styles.card}>
@@ -55,10 +52,6 @@ export function MaterialCard({
         {material.descricao && <p className={styles.desc}>{material.descricao}</p>}
 
         <div className={styles.stats}>
-          <span className={styles.stat}>
-            <ThumbsUp size={16} />
-            <strong>{curtidas}</strong>
-          </span>
           <span className={styles.stat}>
             <Bookmark size={16} />
             <strong>{isFavorite ? 'Salvo' : 'Salvar'}</strong>
@@ -97,16 +90,6 @@ export function MaterialCard({
             <Bookmark size={18} fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
         )}
-
-        <button
-          type="button"
-          className={styles.iconBtn}
-          onClick={() => onLike?.(material)}
-          aria-label="Curtir material"
-          title="Curtir material"
-        >
-          <ThumbsUp size={18} />
-        </button>
 
         {canManage && (
           <>

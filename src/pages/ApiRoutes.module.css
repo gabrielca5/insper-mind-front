@@ -331,8 +331,8 @@
 
 .btnPrimary {
   margin-top: 0.75rem;
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--accent-solid);
+  color: var(--accent-contrast);
 }
 
 .btnSecondary {

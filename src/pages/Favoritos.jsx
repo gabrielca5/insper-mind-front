@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { MaterialCard } from '../components/MaterialCard';
 import { EmptyState, LoadingSpinner } from '../components/UI';
@@ -8,11 +9,11 @@ import { materialService } from '../services/materialService';
 import styles from './Favoritos.module.css';
 
 function isMaterialFavorite(favorito) {
-  return favorito.tipoItem === 'MATERIAL' || !favorito.tipoItem;
+  return favoritoService.getTipoItem(favorito) === 'MATERIAL';
 }
 
 function getFavoriteItemId(favorito) {
-  return favorito.item?.id ?? favorito.recoveredItemId ?? favorito.itemId ?? null;
+  return favoritoService.getItemId(favorito);
 }
 
 async function enrichFavorito(favorito) {
@@ -47,13 +48,49 @@ function getFavoriteTitle(favorito) {
   return `${favorito.tipoItem ?? 'Favorito'} #${favorito.itemId ?? '-'}`;
 }
 
+function getFavoriteIdsText(favorito) {
+  const rememberedItemId = favoritoService.getRememberedItemId(favorito.id);
+  return [
+    `ID favorito ${favorito.id ?? '-'}`,
+    `itemId API ${favorito.itemId ?? '-'}`,
+    rememberedItemId && rememberedItemId !== favorito.itemId ? `ID salvo no front ${rememberedItemId}` : null,
+    favorito.item?.id ? `ID material ${favorito.item.id}` : null,
+    favorito.recoveredItemId && favorito.recoveredItemId !== favorito.itemId ? `ID recuperado ${favorito.recoveredItemId}` : null,
+  ].filter(Boolean).join(' · ');
+}
+
+function isSameFavorite(a, b) {
+  const aItemId = getFavoriteItemId(a);
+  const bItemId = getFavoriteItemId(b);
+
+  if (aItemId && bItemId && favoritoService.getTipoItem(a) === favoritoService.getTipoItem(b)) {
+    return aItemId === bItemId;
+  }
+
+  return a.id === b.id;
+}
+
+function getFavoriteKey(favorito) {
+  return [
+    favorito.id ?? 'sem-id',
+    favoritoService.getTipoItem(favorito),
+    getFavoriteItemId(favorito) ?? 'sem-item',
+    favorito.emailUsuario ?? favorito.nomeUsuario ?? 'sem-usuario',
+  ].join('-');
+}
+
 function FavoriteCard({ favorito, onRemove }) {
   const itemId = getFavoriteItemId(favorito);
 
   if (isMaterialFavorite(favorito)) {
     return (
       <MaterialCard
-        material={favorito.item ?? { id: itemId, titulo: getFavoriteTitle(favorito), descricao: '' }}
+        material={{
+          ...(favorito.item ?? {}),
+          id: itemId,
+          titulo: getFavoriteTitle(favorito),
+          descricao: [getFavoriteIdsText(favorito), favorito.item?.descricao].filter(Boolean).join(' · '),
+        }}
         canFavorite
         isFavorite
         onFavorite={() => onRemove(favorito)}
@@ -65,6 +102,7 @@ function FavoriteCard({ favorito, onRemove }) {
     <article className={styles.card}>
       <div>
         <h2 className={styles.cardTitle}>{getFavoriteTitle(favorito)}</h2>
+        <p className={styles.meta}>{getFavoriteIdsText(favorito)}</p>
         <p className={styles.meta}>
           {favorito.tipoItem ?? 'Item'} · {favorito.nomeUsuario ?? favorito.emailUsuario ?? 'Usuário'}
         </p>
@@ -119,7 +157,8 @@ export function Favoritos() {
   const handleRemove = async (favorito) => {
     if (!window.confirm('Remover favorito?')) return;
 
-    await favoritoService.deleteById(favorito.id);
+    await favoritoService.deleteById(favorito.id, favorito);
+    setFavoritos((current) => current.filter((item) => !isSameFavorite(item, favorito)));
     setMessage('Favorito removido.');
     await loadFavoritos();
   };
@@ -149,7 +188,7 @@ export function Favoritos() {
         ) : (
           <div className={styles.list}>
             {favoritos.map((favorito) => (
-              <FavoriteCard key={favorito.id} favorito={favorito} onRemove={handleRemove} />
+              <FavoriteCard key={getFavoriteKey(favorito)} favorito={favorito} onRemove={handleRemove} />
             ))}
           </div>
         )}

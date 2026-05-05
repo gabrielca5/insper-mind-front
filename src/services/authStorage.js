@@ -3,6 +3,13 @@ import { clearAdminAccess } from './adminAccessStorage';
 
 const AUTH_KEY = 'insperMindAuth';
 const AUTH_EVENT = 'insperMindAuthChanged';
+const FAVORITO_ITEM_MAP_KEY = 'insperMindFavoriteItemMap';
+const FAVORITO_REMOVED_KEY = 'insperMindRemovedFavorites';
+
+function clearFavoriteLocalState() {
+  localStorage.removeItem(FAVORITO_ITEM_MAP_KEY);
+  localStorage.removeItem(FAVORITO_REMOVED_KEY);
+}
 
 export function readAuth() {
   const raw = localStorage.getItem(AUTH_KEY);
@@ -31,6 +38,7 @@ export function readAuth() {
 export function saveAuth(auth) {
   clearApiCache();
   clearAdminAccess();
+  clearFavoriteLocalState();
   localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
   localStorage.setItem('insperMindEmail', auth.email ?? '');
   localStorage.setItem('insperMindLogin', String(auth.loginResponse ?? ''));
@@ -40,6 +48,7 @@ export function saveAuth(auth) {
 export function clearAuth() {
   clearApiCache();
   clearAdminAccess();
+  clearFavoriteLocalState();
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem('insperMindEmail');
   localStorage.removeItem('insperMindLogin');

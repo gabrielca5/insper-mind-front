@@ -97,8 +97,8 @@
 
 .submit {
   border: 0;
-  background: var(--accent);
-  color: #ffffff;
+  background: var(--accent-solid);
+  color: var(--accent-contrast);
 }
 
 .backLink {
