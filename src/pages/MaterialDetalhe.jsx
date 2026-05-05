@@ -203,7 +203,7 @@ export function MaterialDetalhe() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <Breadcrumb items={[
-          { label: 'Catálogo', to: '/' },
+          { label: 'Painel', to: '/' },
           { label: 'Materiais', to: '/materiais' },
           { label: material.titulo ?? 'Material' },
         ]} />

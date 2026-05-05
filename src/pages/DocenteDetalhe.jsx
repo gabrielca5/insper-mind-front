@@ -37,7 +37,7 @@ export function DocenteDetalhe() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <Breadcrumb items={[
-          { label: 'Catálogo', to: '/' },
+          { label: 'Painel', to: '/' },
           { label: 'Docentes', to: '/docentes' },
           { label: docente.nome },
         ]} />

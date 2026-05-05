@@ -92,7 +92,7 @@ export function Comentarios() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Comentários' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Comentários' }]} />
 
         <header className={styles.header}>
           <div>
@@ -130,8 +130,14 @@ export function Comentarios() {
                   {comentario.nomeUsuario ?? comentario.emailUsuario ?? 'Usuário'} · {comentario.curtidas ?? 0} curtidas
                 </p>
                 <div className={styles.cardActions}>
-                  <button className={styles.secondaryBtn} type="button" onClick={() => handleLike(comentario)}>
-                    Curtir
+                  <button
+                    className={styles.secondaryBtn}
+                    type="button"
+                    onClick={() => handleLike(comentario)}
+                    aria-label="Curtir comentário"
+                    title="Curtir comentário"
+                  >
+                    👍
                   </button>
                   <button className={styles.secondaryBtn} type="button" onClick={() => setEditing(comentario)} disabled={!auth?.email}>
                     Editar

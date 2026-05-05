@@ -11,7 +11,7 @@ Swagger usado: `http://3.237.223.11:8080/v3/api-docs`
 - [x] P0 - Comentarios/postagens: botao para criar comentario e curtir.
 - [x] P0 - Favoritos: botao para favoritar/desfavoritar itens.
 - [x] P1 - Perfil: editar usuario logado.
-- [x] P1 - Admin simples: criar/editar/excluir cursos, disciplinas, docentes, semestres e eletivas.
+- [x] P1 - Admin: criar/editar/excluir cursos, disciplinas, docentes, semestres e eletivas.
 - [x] P2 - Melhorar UX: trocar JSON cru por formularios com inputs reais.
 
 ## Conta e usuarios

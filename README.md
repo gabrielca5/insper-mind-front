@@ -13,7 +13,7 @@ Frontend do projeto final de Arquitetura de Objetos (Insper).
 Plataforma de compartilhamento de materiais e gerenciamento de informações acadêmicas. O projeto contempla:
 
 - Autenticação de usuários
-- Catálogo de cursos e disciplinas
+- Painel de cursos e disciplinas
 - Compartilhamento de materiais educacionais
 - Sistema de comentários e favoritos
 - Painel administrativo

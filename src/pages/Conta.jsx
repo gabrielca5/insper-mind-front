@@ -101,7 +101,7 @@ export function Conta() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Conta' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Conta' }]} />
 
         <header className={styles.header}>
           <h1 className={styles.title}>Conta</h1>
