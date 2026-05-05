@@ -10,6 +10,10 @@
 }
 
 .header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -25,6 +29,33 @@
   margin: 0;
   color: var(--text-muted);
   font-size: 0.9rem;
+}
+
+.adminNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.adminNavLink {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text-secondary);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.adminNavLink:hover,
+.adminNavLink.active {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .sections {
@@ -152,8 +183,17 @@
     padding: 1.5rem 1rem;
   }
 
+  .header,
   .sectionHead,
   .card {
     flex-direction: column;
+  }
+
+  .adminNav {
+    width: 100%;
+  }
+
+  .adminNavLink {
+    flex: 1;
   }
 }

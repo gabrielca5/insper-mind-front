@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { clearAuth, listenAuth, readAuth } from '../services/authStorage';
 import { listenTheme, readTheme, THEMES, toggleTheme } from '../services/themeStorage';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
+  const navigate = useNavigate();
   const [auth, setAuth] = useState(() => readAuth());
   const [theme, setTheme] = useState(() => readTheme());
 
@@ -13,6 +14,7 @@ export function Navbar() {
 
   const handleLogout = () => {
     clearAuth();
+    navigate('/', { replace: true });
   };
 
   const handleThemeToggle = () => {
@@ -30,13 +32,16 @@ export function Navbar() {
         </NavLink>
         <ul className={styles.links}>
           <li><NavLink to="/" end className={({ isActive }) => isActive ? styles.active : ''}>Catálogo</NavLink></li>
-          <li><NavLink to="/materiais" className={({ isActive }) => isActive ? styles.active : ''}>Materiais</NavLink></li>
-          <li><NavLink to="/comentarios" className={({ isActive }) => isActive ? styles.active : ''}>Comentários</NavLink></li>
-          <li><NavLink to="/favoritos" className={({ isActive }) => isActive ? styles.active : ''}>Favoritos</NavLink></li>
-          <li><NavLink to="/docentes" className={({ isActive }) => isActive ? styles.active : ''}>Docentes</NavLink></li>
-          <li><NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ''}>Usuários</NavLink></li>
-          <li><NavLink to="/admin" className={({ isActive }) => isActive ? styles.active : ''}>Admin</NavLink></li>
-          <li><NavLink to="/rotas" className={({ isActive }) => isActive ? styles.active : ''}>Rotas</NavLink></li>
+          {auth && (
+            <>
+              <li><NavLink to="/materiais" className={({ isActive }) => isActive ? styles.active : ''}>Materiais</NavLink></li>
+              <li><NavLink to="/comentarios" className={({ isActive }) => isActive ? styles.active : ''}>Comentários</NavLink></li>
+              <li><NavLink to="/favoritos" className={({ isActive }) => isActive ? styles.active : ''}>Favoritos</NavLink></li>
+              <li><NavLink to="/docentes" className={({ isActive }) => isActive ? styles.active : ''}>Docentes</NavLink></li>
+              <li><NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ''}>Usuários</NavLink></li>
+              <li><NavLink to="/admin" className={({ isActive }) => isActive ? styles.active : ''}>Admin</NavLink></li>
+            </>
+          )}
         </ul>
 
         <div className={styles.actions}>

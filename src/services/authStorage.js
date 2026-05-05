@@ -1,4 +1,5 @@
 import { clearApiCache } from './cacheService';
+import { clearAdminAccess } from './adminAccessStorage';
 
 const AUTH_KEY = 'insperMindAuth';
 const AUTH_EVENT = 'insperMindAuthChanged';
@@ -29,6 +30,7 @@ export function readAuth() {
 
 export function saveAuth(auth) {
   clearApiCache();
+  clearAdminAccess();
   localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
   localStorage.setItem('insperMindEmail', auth.email ?? '');
   localStorage.setItem('insperMindLogin', String(auth.loginResponse ?? ''));
@@ -37,6 +39,7 @@ export function saveAuth(auth) {
 
 export function clearAuth() {
   clearApiCache();
+  clearAdminAccess();
   localStorage.removeItem(AUTH_KEY);
   localStorage.removeItem('insperMindEmail');
   localStorage.removeItem('insperMindLogin');

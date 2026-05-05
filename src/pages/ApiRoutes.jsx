@@ -315,11 +315,21 @@ function ResourceIndex() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Rotas' }]} />
+        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Admin', to: '/admin' }, { label: 'Rotas' }]} />
 
         <header className={styles.header}>
-          <h1 className={styles.title}>Rotas da API</h1>
-          <p className={styles.sub}>Telas básicas para chamar os endpoints do Swagger.</p>
+          <div>
+            <h1 className={styles.title}>Rotas da API</h1>
+            <p className={styles.sub}>Telas básicas para chamar os endpoints do Swagger.</p>
+          </div>
+          <nav className={styles.adminNav} aria-label="Subáreas admin">
+            <Link className={styles.adminNavLink} to="/admin">
+              CRUD
+            </Link>
+            <Link className={`${styles.adminNavLink} ${styles.active}`} to="/admin/rotas">
+              Rotas da API
+            </Link>
+          </nav>
         </header>
 
         <section className={styles.postPanel}>
@@ -331,7 +341,7 @@ function ResourceIndex() {
             {postOperations.map((operation) => (
               <Link
                 key={`${operation.resourceKey}-${operation.id}`}
-                to={`/rotas/${operation.resourceKey}#${operation.id}`}
+                to={`/admin/rotas/${operation.resourceKey}#${operation.id}`}
                 className={`${styles.operationBtn} ${styles.postBtn}`}
               >
                 <span className={styles.method}>POST</span>
@@ -345,7 +355,7 @@ function ResourceIndex() {
           {resources.map((resource) => (
             <article key={resource.key} className={styles.resourceCard}>
               <div className={styles.resourceHead}>
-                <Link to={`/rotas/${resource.key}`} className={styles.resourceTitle}>
+                <Link to={`/admin/rotas/${resource.key}`} className={styles.resourceTitle}>
                   {resource.title}
                 </Link>
                 <code className={styles.endpoint}>{resource.endpoint}</code>
@@ -354,7 +364,7 @@ function ResourceIndex() {
                 {getOperations(resource).map((operation) => (
                   <Link
                     key={operation.id}
-                    to={`/rotas/${resource.key}#${operation.id}`}
+                    to={`/admin/rotas/${resource.key}#${operation.id}`}
                     className={styles.operationBtn}
                   >
                     <span className={styles.method}>{operation.method}</span>
@@ -559,14 +569,25 @@ function ResourceCrud({ resource }) {
         <Breadcrumb
           items={[
             { label: 'Catálogo', to: '/' },
-            { label: 'Rotas', to: '/rotas' },
+            { label: 'Admin', to: '/admin' },
+            { label: 'Rotas', to: '/admin/rotas' },
             { label: resource.title },
           ]}
         />
 
         <header className={styles.header}>
-          <h1 className={styles.title}>{resource.title}</h1>
-          <p className={styles.sub}>Chamadas básicas para <code>{resource.endpoint}</code>.</p>
+          <div>
+            <h1 className={styles.title}>{resource.title}</h1>
+            <p className={styles.sub}>Chamadas básicas para <code>{resource.endpoint}</code>.</p>
+          </div>
+          <nav className={styles.adminNav} aria-label="Subáreas admin">
+            <Link className={styles.adminNavLink} to="/admin">
+              CRUD
+            </Link>
+            <Link className={`${styles.adminNavLink} ${styles.active}`} to="/admin/rotas">
+              Rotas da API
+            </Link>
+          </nav>
         </header>
 
         <nav className={styles.routeButtons} aria-label="Rotas do Swagger">
@@ -762,7 +783,7 @@ export function ApiRoutes() {
   const resource = resourcesByKey[resourceKey];
 
   if (!resource) {
-    return <Navigate to="/rotas" replace />;
+    return <Navigate to="/admin/rotas" replace />;
   }
 
   return <ResourceCrud resource={resource} />;

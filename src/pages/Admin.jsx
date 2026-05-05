@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FormModal } from '../components/FormModal';
 import { cursoService } from '../services/cursoService';
@@ -270,8 +271,18 @@ export function Admin() {
         <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Admin' }]} />
 
         <header className={styles.header}>
-          <h1 className={styles.title}>Admin simples</h1>
-          <p className={styles.sub}>CRUD básico com inputs reais para as rotas do Swagger.</p>
+          <div>
+            <h1 className={styles.title}>Admin simples</h1>
+            <p className={styles.sub}>CRUD básico com inputs reais para as rotas do Swagger.</p>
+          </div>
+          <nav className={styles.adminNav} aria-label="Subáreas admin">
+            <Link className={`${styles.adminNavLink} ${styles.active}`} to="/admin">
+              CRUD
+            </Link>
+            <Link className={styles.adminNavLink} to="/admin/rotas">
+              Rotas da API
+            </Link>
+          </nav>
         </header>
 
         <div className={styles.sections}>

@@ -1,5 +1,7 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Navigate, Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
+import { AuthGate } from './components/AuthGate';
+import { AdminGate } from './components/AdminGate';
 import { Home } from './pages/Home';
 import { CursoDetalhe } from './pages/CursoDetalhe';
 import { DisciplinaDetalhe } from './pages/DisciplinaDetalhe';
@@ -18,29 +20,38 @@ import { Conta } from './pages/Conta';
 import { NotFound } from './pages/NotFound';
 
 export default function App() {
+  const protectedPage = (page) => <AuthGate>{page}</AuthGate>;
+  const protectedAdminPage = (page) => (
+    <AuthGate>
+      <AdminGate>{page}</AdminGate>
+    </AuthGate>
+  );
+
   return (
     <HashRouter>
       <Navbar />
       <main>
         <Routes>
           <Route path="/"                        element={<Home />} />
-          <Route path="/cursos/:id"              element={<CursoDetalhe />} />
-          <Route path="/disciplinas/:id"         element={<DisciplinaDetalhe />} />
-          <Route path="/materiais"               element={<Materiais />} />
-          <Route path="/materiais/:id"           element={<MaterialDetalhe />} />
-          <Route path="/docentes"                element={<Docentes />} />
-          <Route path="/docentes/:email"         element={<DocenteDetalhe />} />
-          <Route path="/usuarios"                element={<Usuarios />} />
-          <Route path="/usuarios/:email"         element={<UsuarioDetalhe />} />
-          <Route path="/comentarios"             element={<Comentarios />} />
-          <Route path="/favoritos"               element={<Favoritos />} />
-          <Route path="/perfil"                  element={<Perfil />} />
-          <Route path="/admin"                   element={<Admin />} />
+          <Route path="/cursos/:id"              element={protectedPage(<CursoDetalhe />)} />
+          <Route path="/disciplinas/:id"         element={protectedPage(<DisciplinaDetalhe />)} />
+          <Route path="/materiais"               element={protectedPage(<Materiais />)} />
+          <Route path="/materiais/:id"           element={protectedPage(<MaterialDetalhe />)} />
+          <Route path="/docentes"                element={protectedPage(<Docentes />)} />
+          <Route path="/docentes/:email"         element={protectedPage(<DocenteDetalhe />)} />
+          <Route path="/usuarios"                element={protectedPage(<Usuarios />)} />
+          <Route path="/usuarios/:email"         element={protectedPage(<UsuarioDetalhe />)} />
+          <Route path="/comentarios"             element={protectedPage(<Comentarios />)} />
+          <Route path="/favoritos"               element={protectedPage(<Favoritos />)} />
+          <Route path="/perfil"                  element={protectedPage(<Perfil />)} />
+          <Route path="/admin"                   element={protectedAdminPage(<Admin />)} />
           <Route path="/login"                   element={<Conta />} />
           <Route path="/cadastro"                element={<Conta />} />
-          <Route path="/rotas"                   element={<ApiRoutes />} />
-          <Route path="/rotas/:resourceKey"      element={<ApiRoutes />} />
-          <Route path="*"                        element={<NotFound />} />
+          <Route path="/admin/rotas"             element={protectedAdminPage(<ApiRoutes />)} />
+          <Route path="/admin/rotas/:resourceKey" element={protectedAdminPage(<ApiRoutes />)} />
+          <Route path="/rotas"                   element={<Navigate to="/admin/rotas" replace />} />
+          <Route path="/rotas/:resourceKey"      element={<Navigate to="/admin/rotas" replace />} />
+          <Route path="*"                        element={protectedPage(<NotFound />)} />
         </Routes>
       </main>
     </HashRouter>
