@@ -51,7 +51,7 @@ export function AdminGate({ children }) {
           Entrar no admin
         </button>
         <Link className={styles.backLink} to="/">
-          Voltar ao catálogo
+          Voltar ao painel
         </Link>
       </form>
     </div>

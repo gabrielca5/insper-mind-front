@@ -127,7 +127,7 @@ export function Favoritos() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Favoritos' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Favoritos' }]} />
 
         <header className={styles.header}>
           <div>

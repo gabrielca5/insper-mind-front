@@ -34,7 +34,7 @@ export function CursoDetalhe() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: curso.nome }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: curso.nome }]} />
 
         <header className={styles.header}>
           <h1 className={styles.title}>{curso.nome}</h1>

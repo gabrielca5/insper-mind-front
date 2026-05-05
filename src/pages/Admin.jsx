@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Bookmark, ThumbsUp, MessageCircle, Eye, ExternalLink, Edit, Trash2 } from 'lucide-react';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { FormModal } from '../components/FormModal';
 import { cursoService } from '../services/cursoService';
@@ -187,6 +188,7 @@ function AdminSection({ resource }) {
     await loadItems(page);
   };
 
+  const isMaterial = resource.key === 'materiais';
   return (
     <section className={styles.section}>
       <div className={styles.sectionHead}>
@@ -214,6 +216,46 @@ function AdminSection({ resource }) {
         <p className={styles.empty}>Carregando...</p>
       ) : items.length === 0 ? (
         <p className={styles.empty}>Nenhum registro retornado.</p>
+      ) : isMaterial ? (
+        <div className={styles.galleryGrid}>
+          {items.map((item) => (
+            <article key={item.id} className={styles.galleryCard}>
+              <div className={styles.galleryIconWrap}>
+                <span className={styles.galleryIcon}>{/* PDF icon fallback */}📄</span>
+              </div>
+              <div className={styles.galleryBody}>
+                <span className={styles.galleryBadge}>{item.tipo || 'PDF'}</span>
+                <h3 className={styles.galleryTitle}>{item.titulo}</h3>
+                {item.nomeCurso && <p className={styles.galleryMeta}>{item.nomeCurso}</p>}
+              </div>
+              <div className={styles.galleryActions}>
+                <button className={styles.iconBtn} title="Salvar" aria-label="Salvar">
+                  <Bookmark size={18} strokeWidth={2} />
+                </button>
+                <button className={styles.iconBtn} title="Curtir" aria-label="Curtir">
+                  <ThumbsUp size={18} strokeWidth={2} />
+                </button>
+                <button className={styles.iconBtn} title="Comentar" aria-label="Comentar">
+                  <MessageCircle size={18} strokeWidth={2} />
+                </button>
+                <Link to={`/materiais/${item.id}`} className={styles.iconBtn} title="Ver" aria-label="Ver">
+                  <Eye size={18} strokeWidth={2} />
+                </Link>
+                {item.link && item.link !== '#' && (
+                  <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.iconBtn} title="Acessar" aria-label="Acessar">
+                    <ExternalLink size={18} strokeWidth={2} />
+                  </a>
+                )}
+                <button className={styles.iconBtn} title="Editar" aria-label="Editar" onClick={() => setEditing(item)}>
+                  <Edit size={18} strokeWidth={2} />
+                </button>
+                <button className={styles.iconBtnDanger} title="Excluir" aria-label="Excluir" onClick={() => handleDelete(item)}>
+                  <Trash2 size={18} strokeWidth={2} />
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
       ) : (
         <div className={styles.list}>
           {items.map((item) => (
@@ -268,7 +310,7 @@ export function Admin() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Admin' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Admin' }]} />
 
         <header className={styles.header}>
           <div>

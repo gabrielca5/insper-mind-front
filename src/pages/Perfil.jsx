@@ -83,7 +83,7 @@ export function Perfil() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Perfil' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Perfil' }]} />
 
         <header className={styles.header}>
           <div>

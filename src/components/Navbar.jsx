@@ -31,7 +31,7 @@ export function Navbar() {
           <span className={styles.logoText}>Insper<em>Mind</em></span>
         </NavLink>
         <ul className={styles.links}>
-          <li><NavLink to="/" end className={({ isActive }) => isActive ? styles.active : ''}>Catálogo</NavLink></li>
+          <li><NavLink to="/" end className={({ isActive }) => isActive ? styles.active : ''}>Painel</NavLink></li>
           {auth && (
             <>
               <li><NavLink to="/materiais" className={({ isActive }) => isActive ? styles.active : ''}>Materiais</NavLink></li>

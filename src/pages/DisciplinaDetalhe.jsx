@@ -82,7 +82,7 @@ export function DisciplinaDetalhe() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <Breadcrumb items={[
-          { label: 'Catálogo', to: '/' },
+          { label: 'Painel', to: '/' },
           ...(disciplina.cursoId ? [{ label: 'Curso', to: `/cursos/${disciplina.cursoId}` }] : []),
           { label: disciplina.nome },
         ]} />

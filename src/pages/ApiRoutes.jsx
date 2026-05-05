@@ -315,7 +315,7 @@ function ResourceIndex() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Admin', to: '/admin' }, { label: 'Rotas' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Admin', to: '/admin' }, { label: 'Rotas' }]} />
 
         <header className={styles.header}>
           <div>
@@ -568,7 +568,7 @@ function ResourceCrud({ resource }) {
       <div className={styles.innerWide}>
         <Breadcrumb
           items={[
-            { label: 'Catálogo', to: '/' },
+            { label: 'Painel', to: '/' },
             { label: 'Admin', to: '/admin' },
             { label: 'Rotas', to: '/admin/rotas' },
             { label: resource.title },

@@ -32,7 +32,7 @@ export function Usuarios() {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Usuários' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Usuários' }]} />
 
         <header className={styles.header}>
           <h1 className={styles.title}>Usuários</h1>

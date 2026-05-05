@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styles from './NotFound.module.css';
 
 const quickLinks = [
-  { to: '/', label: 'Catálogo', detail: 'Cursos e disciplinas' },
+  { to: '/', label: 'Painel', detail: 'Cursos e disciplinas' },
   { to: '/materiais', label: 'Materiais', detail: 'PDFs, vídeos e slides' },
   { to: '/docentes', label: 'Docentes', detail: 'Professores cadastrados' },
 ];
@@ -22,7 +22,7 @@ export function NotFound() {
 
           <div className={styles.actions}>
             <Link to="/" className={styles.primaryBtn}>
-              Voltar ao catálogo
+              Voltar ao Painel
             </Link>
             <Link to="/materiais" className={styles.secondaryBtn}>
               Ver materiais

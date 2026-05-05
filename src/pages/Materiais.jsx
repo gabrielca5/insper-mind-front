@@ -5,9 +5,10 @@ import { favoritoService } from '../services/favoritoService';
 import { readAuth } from '../services/authStorage';
 import { useAuth } from '../hooks/useAuth';
 import { FormModal } from '../components/FormModal';
-import { MaterialCard } from '../components/MaterialCard';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LoadingSpinner, EmptyState } from '../components/UI';
+import { MaterialCard } from '../components/MaterialCard';
+import { Search, Filter, RefreshCw, Plus } from 'lucide-react';
 import styles from './Materiais.module.css';
 
 const TIPOS = ['TODOS', ...SUPPORTED_MATERIAL_TYPES];
@@ -51,9 +52,7 @@ function materialFields(auth, cursos, material = {}) {
 }
 
 function editMaterialFields(cursos, material = {}) {
-  return materialFields(null, cursos, material)
-    .filter((field) => field.name !== 'emailUsuario')
-    .concat({ name: 'ativo', label: 'Ativo', type: 'checkbox', defaultValue: material.ativo ?? true });
+  return materialFields(null, cursos, material).filter((field) => field.name !== 'emailUsuario');
 }
 
 export function Materiais() {
@@ -62,6 +61,7 @@ export function Materiais() {
   const [cursos, setCursos] = useState([]);
   const [favoritos, setFavoritos] = useState({});
   const [filtro, setFiltro] = useState('TODOS');
+  const [busca, setBusca] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [editingMaterial, setEditingMaterial] = useState(null);
@@ -89,8 +89,8 @@ export function Materiais() {
       materialService.list(),
       cursoService.list(),
     ]);
-    setMateriais(materialData);
-    setCursos(cursoData);
+    setMateriais(materialData ?? []);
+    setCursos(cursoData ?? []);
     await loadFavoritos();
     setLoading(false);
   }, [loadFavoritos]);
@@ -103,12 +103,32 @@ export function Materiais() {
     loadFavoritos();
   }, [auth?.email, loadFavoritos]);
 
-  const filtrados = filtro === 'TODOS'
-    ? materiais
-    : materiais.filter((m) => m.tipo === filtro);
+  const filtrados = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+
+    return (filtro === 'TODOS' ? materiais : materiais.filter((m) => m.tipo === filtro))
+      .filter((m) => {
+        if (!termo) return true;
+        const texto = [
+          m.titulo,
+          m.nome,
+          m.descricao,
+          m.nomeCurso,
+          m.tipo,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+
+        return texto.includes(termo);
+      });
+  }, [materiais, filtro, busca]);
 
   const createFields = useMemo(() => materialFields(auth, cursos), [auth, cursos]);
-  const editFields = useMemo(() => editMaterialFields(cursos, editingMaterial ?? {}), [cursos, editingMaterial]);
+  const editFields = useMemo(
+    () => editMaterialFields(cursos, editingMaterial ?? {}),
+    [cursos, editingMaterial]
+  );
 
   const handleCreateMaterial = async (payload) => {
     const material = await materialService.save(payload);
@@ -134,49 +154,75 @@ export function Materiais() {
 
   const handleFavorite = async (material) => {
     if (!auth?.email) {
-      setMessage('Faça login para favoritar.');
+      setMessage('Faça login para salvar materiais.');
       return;
     }
 
     if (!material?.id) {
-      setMessage('Não foi possível favoritar: material sem ID.');
+      setMessage('Não foi possível salvar: material sem ID.');
       return;
     }
 
     const favoriteId = favoritos[material.id];
+
     if (favoriteId) {
       await favoritoService.deleteById(favoriteId);
-      setMessage('Favorito removido.');
+      setMessage('Material removido dos salvos.');
     } else {
       const favorito = await favoritoService.save({
         emailUsuario: auth.email,
         itemId: material.id,
         tipoItem: 'MATERIAL',
       });
+      setMessage('Material salvo.');
       setFavoritos((current) => ({ ...current, [material.id]: favorito.id }));
-      setMessage('Material favoritado.');
     }
 
     await loadFavoritos();
   };
 
+  const handleLike = async (material) => {
+    if (!material?.id) return;
+    setMateriais((current) =>
+      current.map((item) =>
+        item.id === material.id
+          ? { ...item, curtidas: (item.curtidas ?? 0) + 1 }
+          : item
+      )
+    );
+    setMessage('Curtida registrada.');
+  };
+
+  const totalCurtidas = materiais.reduce((acc, item) => acc + (item.curtidas ?? 0), 0);
+  const totalSalvos = Object.keys(favoritos).length;
+
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        <Breadcrumb items={[{ label: 'Catálogo', to: '/' }, { label: 'Materiais' }]} />
+        <Breadcrumb items={[{ label: 'Painel', to: '/' }, { label: 'Materiais' }]} />
 
-        <header className={styles.header}>
+        <header>
           <div>
             <h1 className={styles.title}>Materiais Acadêmicos</h1>
-            <p className={styles.sub}>PDFs, vídeos, slides e outros recursos de estudo</p>
+            <p className={styles.sub}>
+              Uma galeria para estudar, salvar e navegar rápido pelos recursos
+            </p>
           </div>
+
           <div className={styles.headerActions}>
             <button type="button" className={styles.secondaryBtn} onClick={loadMateriais}>
-              Recarregar materiais
+              <RefreshCw size={16} />
+              Recarregar
             </button>
+
             <FormModal
               title="Enviar material"
-              triggerLabel="Enviar material"
+              triggerLabel={
+                <>
+                  <Plus size={16} />
+                  Enviar material
+                </>
+              }
               submitLabel="POST /material"
               fields={createFields}
               disabled={!auth?.email}
@@ -188,16 +234,30 @@ export function Materiais() {
 
         {message && <p className={styles.message}>{message}</p>}
 
-        <div className={styles.filters}>
-          {TIPOS.map((t) => (
-            <button
-              key={t}
-              className={`${styles.filterBtn} ${filtro === t ? styles.active : ''}`}
-              onClick={() => setFiltro(t)}
-            >
-              {t === 'TODOS' ? 'Todos' : t.charAt(0) + t.slice(1).toLowerCase()}
-            </button>
-          ))}
+        <div className={styles.toolbar}>
+          <div className={styles.searchBox}>
+            <Search size={16} />
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar por título, curso, tipo..."
+              aria-label="Buscar materiais"
+            />
+          </div>
+
+          <div className={styles.filters}>
+            {TIPOS.map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`${styles.filterBtn} ${filtro === t ? styles.active : ''}`}
+                onClick={() => setFiltro(t)}
+              >
+                <Filter size={14} />
+                {t === 'TODOS' ? 'Todos' : t.charAt(0) + t.slice(1).toLowerCase()}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
@@ -206,19 +266,20 @@ export function Materiais() {
           <EmptyState
             icon="📦"
             title="Nenhum material encontrado"
-            subtitle={filtro !== 'TODOS' ? `Sem materiais do tipo "${filtro}"` : undefined}
+            subtitle={filtro !== 'TODOS' ? `Sem materiais do tipo "${filtro}"` : 'Tente outro termo de busca'}
           />
         ) : (
-          <div className={styles.list}>
+          <div className={styles.galleryGrid}>
             {filtrados.map((m) => (
               <MaterialCard
                 key={m.id}
                 material={m}
-                canFavorite={Boolean(auth?.email)}
-                canManage={Boolean(auth?.email)}
                 isFavorite={Boolean(favoritos[m.id])}
+                canFavorite={true}
+                canManage={true}
                 onFavorite={handleFavorite}
-                onEdit={setEditingMaterial}
+                onLike={handleLike}
+                onEdit={() => setEditingMaterial(m)}
                 onDelete={handleDeleteMaterial}
               />
             ))}

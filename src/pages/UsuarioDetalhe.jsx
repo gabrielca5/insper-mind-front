@@ -37,7 +37,7 @@ export function UsuarioDetalhe() {
     <div className={styles.page}>
       <div className={styles.inner}>
         <Breadcrumb items={[
-          { label: 'Catálogo', to: '/' },
+          { label: 'Painel', to: '/' },
           { label: 'Usuários', to: '/usuarios' },
           { label: usuario.nome },
         ]} />
