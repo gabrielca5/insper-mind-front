@@ -11,7 +11,6 @@ import { Docentes } from './pages/Docentes';
 import { DocenteDetalhe } from './pages/DocenteDetalhe';
 import { Usuarios } from './pages/Usuarios';
 import { UsuarioDetalhe } from './pages/UsuarioDetalhe';
-import { Comentarios } from './pages/Comentarios';
 import { Favoritos } from './pages/Favoritos';
 import { Perfil } from './pages/Perfil';
 import { Admin } from './pages/Admin';
@@ -41,7 +40,7 @@ export default function App() {
           <Route path="/docentes/:email"         element={protectedPage(<DocenteDetalhe />)} />
           <Route path="/usuarios"                element={protectedPage(<Usuarios />)} />
           <Route path="/usuarios/:email"         element={protectedPage(<UsuarioDetalhe />)} />
-          <Route path="/comentarios"             element={protectedPage(<Comentarios />)} />
+          <Route path="/comentarios"             element={<Navigate to="/materiais" replace />} />
           <Route path="/favoritos"               element={protectedPage(<Favoritos />)} />
           <Route path="/perfil"                  element={protectedPage(<Perfil />)} />
           <Route path="/admin"                   element={protectedAdminPage(<Admin />)} />
