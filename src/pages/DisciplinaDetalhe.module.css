@@ -43,6 +43,39 @@
   margin: 0;
 }
 
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.infoItem {
+  min-height: 88px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.infoItem span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.infoItem strong {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
 .docenteBox {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -125,6 +158,10 @@
 }
 
 @media (max-width: 720px) {
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
   .sectionHead {
     align-items: flex-start;
     flex-direction: column;

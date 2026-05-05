@@ -10,6 +10,13 @@ import { Breadcrumb } from '../components/Breadcrumb';
 import { LoadingSpinner, EmptyState } from '../components/UI';
 import styles from './DisciplinaDetalhe.module.css';
 
+function getSemestreLabel(disciplina) {
+  if (disciplina?.nomeSemestre) return disciplina.nomeSemestre;
+  if (disciplina?.semestre) return `${disciplina.semestre}º Semestre`;
+  if (disciplina?.semestreId) return `Semestre #${disciplina.semestreId}`;
+  return null;
+}
+
 export function DisciplinaDetalhe() {
   const { id } = useParams();
   const auth = useAuth();
@@ -83,19 +90,39 @@ export function DisciplinaDetalhe() {
       <div className={styles.inner}>
         <Breadcrumb items={[
           { label: 'Painel', to: '/' },
-          ...(disciplina.cursoId ? [{ label: 'Curso', to: `/cursos/${disciplina.cursoId}` }] : []),
+          { label: 'Disciplinas', to: '/disciplinas' },
+          ...(disciplina.cursoId ? [{ label: disciplina.nomeCurso ?? 'Curso', to: `/cursos/${disciplina.cursoId}` }] : []),
           { label: disciplina.nome },
         ]} />
 
         <header className={styles.header}>
-          {disciplina.semestre && (
-            <span className={styles.semBadge}>{disciplina.semestre}º Semestre</span>
+          {getSemestreLabel(disciplina) && (
+            <span className={styles.semBadge}>{getSemestreLabel(disciplina)}</span>
           )}
           <h1 className={styles.title}>{disciplina.nome}</h1>
           {disciplina.descricao && (
             <p className={styles.desc}>{disciplina.descricao}</p>
           )}
         </header>
+
+        <section className={styles.infoGrid} aria-label="Dados da disciplina">
+          <div className={styles.infoItem}>
+            <span>Curso</span>
+            <strong>{disciplina.nomeCurso ?? (disciplina.cursoId ? `Curso #${disciplina.cursoId}` : 'Nao informado')}</strong>
+          </div>
+          <div className={styles.infoItem}>
+            <span>Formula</span>
+            <strong>{disciplina.formulaAvaliacao ?? 'Nao informada'}</strong>
+          </div>
+          <div className={styles.infoItem}>
+            <span>Delta</span>
+            <strong>{disciplina.temDelta ? 'Sim' : 'Nao'}</strong>
+          </div>
+          <div className={styles.infoItem}>
+            <span>Criterio de barreira</span>
+            <strong>{disciplina.criterioBarreira ?? 'Nao informado'}</strong>
+          </div>
+        </section>
 
         {docente && (
           <div className={styles.docenteBox}>
