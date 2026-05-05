@@ -22,7 +22,7 @@ export function Home() {
         <div className={styles.heroInner}>
           <span className={styles.heroTag}>Plataforma Acadêmica</span>
           <h1 className={styles.heroTitle}>
-            Seu catálogo de<br />
+            Seu fórum de<br />
             <em>conhecimento</em> Insper
           </h1>
           <p className={styles.heroSub}>
