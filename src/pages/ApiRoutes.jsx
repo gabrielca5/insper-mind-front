@@ -12,6 +12,16 @@ import { semestreService } from '../services/semestreService';
 import { usuarioService } from '../services/usuarioService';
 import styles from './ApiRoutes.module.css';
 
+// br.insper.insperMind.material.TipoMaterial
+const TipoMaterial = {
+  PROVA_ANTIGA: 'PROVA_ANTIGA',
+  RESUMO: 'RESUMO',
+  EXERCICIO_RESOLVIDO: 'EXERCICIO_RESOLVIDO',
+  LISTA: 'LISTA',
+  PDF: 'PDF',
+  LIVRO: 'LIVRO',
+};
+
 const resources = [
   {
     key: 'usuarios',
@@ -110,7 +120,7 @@ const resources = [
       titulo: '',
       descricao: '',
       link: '',
-      tipo: 'PDF',
+      tipo: TipoMaterial.PDF,
       emailUsuario: '',
       disciplinaId: 1,
     },
@@ -121,9 +131,8 @@ const resources = [
       titulo: '',
       descricao: '',
       link: '',
-      tipo: 'PDF',
-      emailUsuario: '',
-      disciplinaId: 1,
+      tipo: TipoMaterial.PDF,
+      cursoId: 1,
       ativo: true,
     },
     deleteLabel: 'ID',

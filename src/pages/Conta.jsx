@@ -119,7 +119,6 @@ export function Conta() {
           <form className={styles.panel} onSubmit={handleCadastro}>
             <div className={styles.panelHead}>
               <h2 className={styles.panelTitle}>Criar conta</h2>
-              <code>POST /usuario</code>
             </div>
 
             <label className={styles.label}>
@@ -164,7 +163,6 @@ export function Conta() {
           <form className={styles.panel} onSubmit={handleLogin}>
             <div className={styles.panelHead}>
               <h2 className={styles.panelTitle}>Entrar</h2>
-              <code>POST /usuario/login</code>
             </div>
 
             <label className={styles.label}>
