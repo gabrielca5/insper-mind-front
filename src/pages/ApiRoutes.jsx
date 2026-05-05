@@ -412,29 +412,40 @@ function JsonForm({ id, title, endpoint, body, setBody, onSubmit, busy }) {
   );
 }
 
-function MaterialJsonForm({ id, title, endpoint, body, setBody, onSubmit, busy }) {
-  const buttonLabel = endpoint.startsWith('POST') ? endpoint : 'Enviar';
-  const [parsedBody, setParsedBody] = useState(() => {
+function MaterialForm({ id, title, endpoint, body, setBody, onSubmit, busy, isUpdate = false }) {
+  const [form, setForm] = useState(() => {
     try {
       return JSON.parse(body);
     } catch {
-      return {};
+      return {
+        titulo: '',
+        descricao: '',
+        link: '',
+        tipo: TipoMaterial.PDF,
+        emailUsuario: '',
+        cursoId: 1,
+        ativo: true,
+      };
     }
   });
 
   useEffect(() => {
     try {
-      setParsedBody(JSON.parse(body));
+      setForm(JSON.parse(body));
     } catch {
       // Keep previous state if JSON is invalid
     }
   }, [body]);
 
-  const handleTipoChange = (event) => {
-    const newTipo = event.target.value;
-    const updated = { ...parsedBody, tipo: newTipo };
+  const handleFieldChange = (field, value) => {
+    const updated = { ...form, [field]: value };
+    setForm(updated);
     setBody(JSON.stringify(updated, null, 2));
-    setParsedBody(updated);
+  };
+
+  const handleSubmit = () => {
+    setBody(JSON.stringify(form, null, 2));
+    onSubmit();
   };
 
   return (
@@ -443,27 +454,70 @@ function MaterialJsonForm({ id, title, endpoint, body, setBody, onSubmit, busy }
         <h2 className={styles.sectionTitle}>{title}</h2>
         <code className={styles.endpoint}>{endpoint}</code>
       </div>
-      <div className={styles.formField}>
+      <label className={styles.label}>
+        <span>Título</span>
+        <input
+          className={styles.input}
+          value={form.titulo || ''}
+          onChange={(e) => handleFieldChange('titulo', e.target.value)}
+          placeholder="Título do material"
+        />
+      </label>
+      <label className={styles.label}>
+        <span>Descrição</span>
+        <textarea
+          className={styles.textarea}
+          value={form.descricao || ''}
+          onChange={(e) => handleFieldChange('descricao', e.target.value)}
+          placeholder="Descrição do material"
+          spellCheck="false"
+        />
+      </label>
+      <label className={styles.label}>
+        <span>Link</span>
+        <input
+          className={styles.input}
+          value={form.link || ''}
+          onChange={(e) => handleFieldChange('link', e.target.value)}
+          placeholder="URL do material"
+        />
+      </label>
+      <label className={styles.label}>
+        <span>Tipo</span>
+        <select
+          className={styles.select}
+          value={form.tipo || TipoMaterial.PDF}
+          onChange={(e) => handleFieldChange('tipo', e.target.value)}
+        >
+          {Object.entries(TipoMaterial).map(([key, value]) => (
+            <option key={value} value={value}>
+              {key}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className={styles.label}>
+        <span>Email do usuário</span>
+        <input
+          className={styles.input}
+          value={form.emailUsuario || ''}
+          onChange={(e) => handleFieldChange('emailUsuario', e.target.value)}
+          placeholder="email@example.com"
+        />
+      </label>
+      {!isUpdate && (
         <label className={styles.label}>
-          <span>Tipo de Material</span>
-          <select className={styles.select} value={parsedBody.tipo || ''} onChange={handleTipoChange}>
-            <option value="">Selecione um tipo...</option>
-            {Object.entries(TipoMaterial).map(([key, value]) => (
-              <option key={value} value={value}>
-                {key}
-              </option>
-            ))}
-          </select>
+          <span>ID do Curso</span>
+          <input
+            className={styles.input}
+            type="number"
+            value={form.cursoId || 1}
+            onChange={(e) => handleFieldChange('cursoId', parseInt(e.target.value))}
+          />
         </label>
-      </div>
-      <textarea
-        className={styles.textarea}
-        value={body}
-        onChange={(event) => setBody(event.target.value)}
-        spellCheck="false"
-      />
-      <button className={styles.btnPrimary} onClick={onSubmit} disabled={busy}>
-        {buttonLabel}
+      )}
+      <button className={styles.btnPrimary} onClick={handleSubmit} disabled={busy}>
+        {endpoint.startsWith('POST') ? endpoint : 'Enviar'}
       </button>
     </section>
   );
@@ -738,9 +792,9 @@ function ResourceCrud({ resource }) {
           )}
 
           {resource.create && resource.key === 'materiais' && (
-            <MaterialJsonForm
+            <MaterialForm
               id="criar"
-              title="Criar"
+              title="Criar Material"
               endpoint={`POST ${resource.endpoint}`}
               body={createBody}
               setBody={setCreateBody}
@@ -777,7 +831,7 @@ function ResourceCrud({ resource }) {
                   onChange={(event) => setUpdateValue(event.target.value)}
                 />
               </label>
-              <MaterialJsonForm
+              <MaterialForm
                 id="editar-material"
                 title=""
                 endpoint=""
@@ -785,6 +839,7 @@ function ResourceCrud({ resource }) {
                 setBody={setUpdateBody}
                 busy={busy}
                 onSubmit={handleUpdate}
+                isUpdate={true}
               />
             </section>
           )}
