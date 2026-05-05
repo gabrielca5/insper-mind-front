@@ -56,11 +56,43 @@ export function DocenteDetalhe() {
         </div>
 
         <div className={styles.placeholder}>
-          <span className={styles.placeholderIcon}>🚧</span>
           <p className={styles.placeholderText}>
-            As disciplinas e demais dados do docente estarão disponíveis quando o endpoint <code>/disciplina?docenteEmail</code> for implementado no backend.
+            
           </p>
         </div>
+
+        {docente.disciplinas && docente.disciplinas.length > 0 && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Disciplinas</h2>
+              <p className={styles.sectionSub}>
+                {docente.disciplinas.length} {docente.disciplinas.length === 1 ? 'disciplina' : 'disciplinas'}
+              </p>
+            </div>
+            <div className={styles.disciplinasList}>
+              {docente.disciplinas.map((disciplina) => (
+                <div key={disciplina.id} className={styles.disciplinaItem}>
+                  <h3 className={styles.disciplinaName}>{disciplina.nome}</h3>
+                  {disciplina.formulaAvaliacao && (
+                    <p className={styles.disciplinaInfo}>
+                      <strong>Fórmula:</strong> {disciplina.formulaAvaliacao}
+                    </p>
+                  )}
+                  {disciplina.criterioBarreira && (
+                    <p className={styles.disciplinaInfo}>
+                      <strong>Critério:</strong> {disciplina.criterioBarreira}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+        {(!docente.disciplinas || docente.disciplinas.length === 0) && (
+          <div className={styles.empty}>
+            <p className={styles.emptyText}>Nenhuma disciplina associada a este docente.</p>
+          </div>
+        )}
       </div>
     </div>
   );

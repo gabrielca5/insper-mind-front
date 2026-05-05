@@ -425,6 +425,117 @@ function JsonForm({ id, title, endpoint, body, setBody, onSubmit, busy }) {
   );
 }
 
+function MaterialForm({ id, title, endpoint, body, setBody, onSubmit, busy, isUpdate = false }) {
+  const [form, setForm] = useState(() => {
+    try {
+      return JSON.parse(body);
+    } catch {
+      return {
+        titulo: '',
+        descricao: '',
+        link: '',
+        tipo: TipoMaterial.PDF,
+        emailUsuario: '',
+        cursoId: 1,
+        ativo: true,
+      };
+    }
+  });
+
+  useEffect(() => {
+    try {
+      setForm(JSON.parse(body));
+    } catch {
+      // Keep previous state if JSON is invalid
+    }
+  }, [body]);
+
+  const handleFieldChange = (field, value) => {
+    const updated = { ...form, [field]: value };
+    setForm(updated);
+    setBody(JSON.stringify(updated, null, 2));
+  };
+
+  const handleSubmit = () => {
+    setBody(JSON.stringify(form, null, 2));
+    onSubmit();
+  };
+
+  return (
+    <section id={id} className={styles.section}>
+      <div className={styles.sectionHead}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        <code className={styles.endpoint}>{endpoint}</code>
+      </div>
+      <label className={styles.label}>
+        <span>Título</span>
+        <input
+          className={styles.input}
+          value={form.titulo || ''}
+          onChange={(e) => handleFieldChange('titulo', e.target.value)}
+          placeholder="Título do material"
+        />
+      </label>
+      <label className={styles.label}>
+        <span>Descrição</span>
+        <textarea
+          className={styles.textarea}
+          value={form.descricao || ''}
+          onChange={(e) => handleFieldChange('descricao', e.target.value)}
+          placeholder="Descrição do material"
+          spellCheck="false"
+        />
+      </label>
+      <label className={styles.label}>
+        <span>Link</span>
+        <input
+          className={styles.input}
+          value={form.link || ''}
+          onChange={(e) => handleFieldChange('link', e.target.value)}
+          placeholder="URL do material"
+        />
+      </label>
+      <label className={styles.label}>
+        <span>Tipo</span>
+        <select
+          className={styles.select}
+          value={form.tipo || TipoMaterial.PDF}
+          onChange={(e) => handleFieldChange('tipo', e.target.value)}
+        >
+          {Object.entries(TipoMaterial).map(([key, value]) => (
+            <option key={value} value={value}>
+              {key}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className={styles.label}>
+        <span>Email do usuário</span>
+        <input
+          className={styles.input}
+          value={form.emailUsuario || ''}
+          onChange={(e) => handleFieldChange('emailUsuario', e.target.value)}
+          placeholder="email@example.com"
+        />
+      </label>
+      {!isUpdate && (
+        <label className={styles.label}>
+          <span>ID do Curso</span>
+          <input
+            className={styles.input}
+            type="number"
+            value={form.cursoId || 1}
+            onChange={(e) => handleFieldChange('cursoId', parseInt(e.target.value))}
+          />
+        </label>
+      )}
+      <button className={styles.btnPrimary} onClick={handleSubmit} disabled={busy}>
+        {endpoint.startsWith('POST') ? endpoint : 'Enviar'}
+      </button>
+    </section>
+  );
+}
+
 function KeyAction({ id, title, endpoint, label, value, setValue, onSubmit, busy, danger = false }) {
   return (
     <section id={id} className={styles.section}>
@@ -693,7 +804,19 @@ function ResourceCrud({ resource }) {
             />
           )}
 
-          {resource.create && (
+          {resource.create && resource.key === 'materiais' && (
+            <MaterialForm
+              id="criar"
+              title="Criar Material"
+              endpoint={`POST ${resource.endpoint}`}
+              body={createBody}
+              setBody={setCreateBody}
+              busy={busy}
+              onSubmit={handleCreate}
+            />
+          )}
+
+          {resource.create && resource.key !== 'materiais' && (
             <JsonForm
               id="criar"
               title="Criar"
@@ -705,7 +828,36 @@ function ResourceCrud({ resource }) {
             />
           )}
 
-          {resource.update && (
+          {resource.update && resource.key === 'materiais' && (
+            <section id="editar" className={styles.section}>
+              <div className={styles.sectionHead}>
+                <h2 className={styles.sectionTitle}>Editar</h2>
+                <code className={styles.endpoint}>
+                  {resource.updateMethod} {resource.endpoint}/{'{'}{resource.updateLabel.toLowerCase()}{'}'}
+                </code>
+              </div>
+              <label className={styles.label}>
+                <span>{resource.updateLabel}</span>
+                <input
+                  className={styles.input}
+                  value={updateValue}
+                  onChange={(event) => setUpdateValue(event.target.value)}
+                />
+              </label>
+              <MaterialForm
+                id="editar-material"
+                title=""
+                endpoint=""
+                body={updateBody}
+                setBody={setUpdateBody}
+                busy={busy}
+                onSubmit={handleUpdate}
+                isUpdate={true}
+              />
+            </section>
+          )}
+
+          {resource.update && resource.key !== 'materiais' && (
             <section id="editar" className={styles.section}>
               <div className={styles.sectionHead}>
                 <h2 className={styles.sectionTitle}>Editar</h2>
