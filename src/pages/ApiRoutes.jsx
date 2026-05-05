@@ -412,6 +412,63 @@ function JsonForm({ id, title, endpoint, body, setBody, onSubmit, busy }) {
   );
 }
 
+function MaterialJsonForm({ id, title, endpoint, body, setBody, onSubmit, busy }) {
+  const buttonLabel = endpoint.startsWith('POST') ? endpoint : 'Enviar';
+  const [parsedBody, setParsedBody] = useState(() => {
+    try {
+      return JSON.parse(body);
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    try {
+      setParsedBody(JSON.parse(body));
+    } catch {
+      // Keep previous state if JSON is invalid
+    }
+  }, [body]);
+
+  const handleTipoChange = (event) => {
+    const newTipo = event.target.value;
+    const updated = { ...parsedBody, tipo: newTipo };
+    setBody(JSON.stringify(updated, null, 2));
+    setParsedBody(updated);
+  };
+
+  return (
+    <section id={id} className={styles.section}>
+      <div className={styles.sectionHead}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        <code className={styles.endpoint}>{endpoint}</code>
+      </div>
+      <div className={styles.formField}>
+        <label className={styles.label}>
+          <span>Tipo de Material</span>
+          <select className={styles.select} value={parsedBody.tipo || ''} onChange={handleTipoChange}>
+            <option value="">Selecione um tipo...</option>
+            {Object.entries(TipoMaterial).map(([key, value]) => (
+              <option key={value} value={value}>
+                {key}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <textarea
+        className={styles.textarea}
+        value={body}
+        onChange={(event) => setBody(event.target.value)}
+        spellCheck="false"
+      />
+      <button className={styles.btnPrimary} onClick={onSubmit} disabled={busy}>
+        {buttonLabel}
+      </button>
+    </section>
+  );
+}
+
 function KeyAction({ id, title, endpoint, label, value, setValue, onSubmit, busy, danger = false }) {
   return (
     <section id={id} className={styles.section}>
@@ -680,7 +737,19 @@ function ResourceCrud({ resource }) {
             />
           )}
 
-          {resource.create && (
+          {resource.create && resource.key === 'materiais' && (
+            <MaterialJsonForm
+              id="criar"
+              title="Criar"
+              endpoint={`POST ${resource.endpoint}`}
+              body={createBody}
+              setBody={setCreateBody}
+              busy={busy}
+              onSubmit={handleCreate}
+            />
+          )}
+
+          {resource.create && resource.key !== 'materiais' && (
             <JsonForm
               id="criar"
               title="Criar"
@@ -692,7 +761,35 @@ function ResourceCrud({ resource }) {
             />
           )}
 
-          {resource.update && (
+          {resource.update && resource.key === 'materiais' && (
+            <section id="editar" className={styles.section}>
+              <div className={styles.sectionHead}>
+                <h2 className={styles.sectionTitle}>Editar</h2>
+                <code className={styles.endpoint}>
+                  {resource.updateMethod} {resource.endpoint}/{'{'}{resource.updateLabel.toLowerCase()}{'}'}
+                </code>
+              </div>
+              <label className={styles.label}>
+                <span>{resource.updateLabel}</span>
+                <input
+                  className={styles.input}
+                  value={updateValue}
+                  onChange={(event) => setUpdateValue(event.target.value)}
+                />
+              </label>
+              <MaterialJsonForm
+                id="editar-material"
+                title=""
+                endpoint=""
+                body={updateBody}
+                setBody={setUpdateBody}
+                busy={busy}
+                onSubmit={handleUpdate}
+              />
+            </section>
+          )}
+
+          {resource.update && resource.key !== 'materiais' && (
             <section id="editar" className={styles.section}>
               <div className={styles.sectionHead}>
                 <h2 className={styles.sectionTitle}>Editar</h2>
