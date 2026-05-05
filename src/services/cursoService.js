@@ -1,5 +1,9 @@
 import api from './api';
+import { cachedGet, createCacheKey, invalidateCache } from './cacheService';
 import { buildPageParams, encodePath, normalizeList, normalizePage } from './serviceUtils';
+
+const CACHE_RESOURCE = 'curso';
+const CACHE_SCOPE = `${CACHE_RESOURCE}:`;
 
 const MOCK_CURSOS = [
   {
@@ -27,10 +31,14 @@ const MOCK_CURSOS = [
 export const cursoService = {
   async list(params = {}) {
     try {
-      const response = await api.get('/curso', {
-        params: buildPageParams(params),
+      const requestParams = buildPageParams(params);
+      const data = await cachedGet(createCacheKey(CACHE_RESOURCE, 'list', requestParams), async () => {
+        const response = await api.get('/curso', {
+          params: requestParams,
+        });
+        return response.data;
       });
-      return normalizeList(response.data, MOCK_CURSOS);
+      return normalizeList(data, MOCK_CURSOS);
     } catch {
       return MOCK_CURSOS;
     }
@@ -38,10 +46,14 @@ export const cursoService = {
 
   async listPage(page = 0, size = 20, sort) {
     try {
-      const response = await api.get('/curso', {
-        params: buildPageParams(page, size, sort),
+      const requestParams = buildPageParams(page, size, sort);
+      const data = await cachedGet(createCacheKey(CACHE_RESOURCE, 'page', requestParams), async () => {
+        const response = await api.get('/curso', {
+          params: requestParams,
+        });
+        return response.data;
       });
-      return normalizePage(response.data, MOCK_CURSOS);
+      return normalizePage(data, MOCK_CURSOS);
     } catch {
       return normalizePage(null, MOCK_CURSOS);
     }
@@ -49,8 +61,10 @@ export const cursoService = {
 
   async getById(id) {
     try {
-      const response = await api.get(`/curso/${encodePath(id)}`);
-      return response.data;
+      return await cachedGet(createCacheKey(CACHE_RESOURCE, 'item', { id }), async () => {
+        const response = await api.get(`/curso/${encodePath(id)}`);
+        return response.data;
+      });
     } catch {
       return MOCK_CURSOS.find((curso) => curso.id === Number(id)) ?? null;
     }
@@ -58,15 +72,18 @@ export const cursoService = {
 
   async save(dto) {
     const response = await api.post('/curso', dto);
+    invalidateCache(CACHE_SCOPE);
     return response.data;
   },
 
   async update(id, dto) {
     const response = await api.put(`/curso/${encodePath(id)}`, dto);
+    invalidateCache(CACHE_SCOPE);
     return response.data;
   },
 
   async deleteById(id) {
     await api.delete(`/curso/${encodePath(id)}`);
+    invalidateCache(CACHE_SCOPE);
   },
 };

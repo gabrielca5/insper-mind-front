@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Breadcrumb } from '../components/Breadcrumb';
+import { saveAuth } from '../services/authStorage';
 import { usuarioService } from '../services/usuarioService';
 import styles from './Conta.module.css';
 
@@ -15,10 +17,17 @@ const initialLogin = {
 };
 
 function getErrorMessage(error) {
-  return error?.response?.data?.message || error?.response?.data || error?.message || 'Erro na chamada.';
+  const data = error?.response?.data;
+
+  if (typeof data === 'string') return data;
+  if (data?.message) return data.message;
+  if (data) return JSON.stringify(data);
+
+  return error?.message || 'Erro na chamada.';
 }
 
 export function Conta() {
+  const navigate = useNavigate();
   const [cadastro, setCadastro] = useState(initialCadastro);
   const [login, setLogin] = useState(initialLogin);
   const [loadingCadastro, setLoadingCadastro] = useState(false);
@@ -43,9 +52,23 @@ export function Conta() {
 
     try {
       const usuario = await usuarioService.save(cadastro);
-      setCadastroMsg(`Conta criada para ${usuario.nome ?? cadastro.nome}.`);
+      const loginResponse = await usuarioService.login({
+        email: cadastro.email,
+        senha: cadastro.senha,
+      });
+
+      saveAuth({
+        email: cadastro.email,
+        nome: usuario?.nome ?? cadastro.nome,
+        usuario,
+        loginResponse,
+        loggedAt: new Date().toISOString(),
+      });
+
+      setCadastroMsg(`Conta criada para ${usuario?.nome ?? cadastro.nome}.`);
       setLogin({ email: cadastro.email, senha: cadastro.senha });
       setCadastro(initialCadastro);
+      navigate('/');
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -61,9 +84,13 @@ export function Conta() {
 
     try {
       const response = await usuarioService.login(login);
-      localStorage.setItem('insperMindLogin', String(response));
-      localStorage.setItem('insperMindEmail', login.email);
+      saveAuth({
+        email: login.email,
+        loginResponse: response,
+        loggedAt: new Date().toISOString(),
+      });
       setLoginMsg('Login realizado com sucesso.');
+      navigate('/');
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

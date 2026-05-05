@@ -1,5 +1,5 @@
 .page {
-  background: #fff;
+  background: var(--page-bg);
   min-height: calc(100vh - 64px);
 }
 
@@ -69,12 +69,19 @@
 
 .futureCard {
   background: var(--surface);
-  border: 1.5px dashed var(--border);
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
   padding: 1.25rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.futureCard:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
 }
 
 .futureIcon {
@@ -94,13 +101,4 @@
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.5;
-}
-
-.futureSub code {
-  background: #fff;
-  border: 1px solid var(--border);
-  padding: 0.1em 0.4em;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  color: var(--accent);
 }

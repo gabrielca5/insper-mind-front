@@ -1,7 +1,26 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { clearAuth, listenAuth, readAuth } from '../services/authStorage';
+import { listenTheme, readTheme, THEMES, toggleTheme } from '../services/themeStorage';
 import styles from './Navbar.module.css';
 
 export function Navbar() {
+  const [auth, setAuth] = useState(() => readAuth());
+  const [theme, setTheme] = useState(() => readTheme());
+
+  useEffect(() => listenAuth(setAuth), []);
+  useEffect(() => listenTheme(setTheme), []);
+
+  const handleLogout = () => {
+    clearAuth();
+  };
+
+  const handleThemeToggle = () => {
+    setTheme(toggleTheme(theme));
+  };
+
+  const nextThemeLabel = theme === THEMES.dark ? 'tema claro' : 'tema escuro';
+
   return (
     <nav className={styles.nav}>
       <div className={styles.inner}>
@@ -12,11 +31,45 @@ export function Navbar() {
         <ul className={styles.links}>
           <li><NavLink to="/" end className={({ isActive }) => isActive ? styles.active : ''}>Catálogo</NavLink></li>
           <li><NavLink to="/materiais" className={({ isActive }) => isActive ? styles.active : ''}>Materiais</NavLink></li>
+          <li><NavLink to="/comentarios" className={({ isActive }) => isActive ? styles.active : ''}>Comentários</NavLink></li>
+          <li><NavLink to="/favoritos" className={({ isActive }) => isActive ? styles.active : ''}>Favoritos</NavLink></li>
           <li><NavLink to="/docentes" className={({ isActive }) => isActive ? styles.active : ''}>Docentes</NavLink></li>
           <li><NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ''}>Usuários</NavLink></li>
+          <li><NavLink to="/admin" className={({ isActive }) => isActive ? styles.active : ''}>Admin</NavLink></li>
           <li><NavLink to="/rotas" className={({ isActive }) => isActive ? styles.active : ''}>Rotas</NavLink></li>
-          <li><NavLink to="/login" className={({ isActive }) => isActive ? styles.active : ''}>Conta</NavLink></li>
         </ul>
+
+        <div className={styles.actions}>
+          <button
+            className={styles.themeToggle}
+            type="button"
+            onClick={handleThemeToggle}
+            aria-label={`Alternar para ${nextThemeLabel}`}
+            title={`Alternar para ${nextThemeLabel}`}
+          >
+            <span className={styles.themeKnob} aria-hidden="true" />
+            <span>{theme === THEMES.dark ? 'Claro' : 'Escuro'}</span>
+          </button>
+          {auth ? (
+            <div className={styles.session}>
+              <NavLink to="/perfil" className={styles.profileLink}>
+                {auth.email}
+              </NavLink>
+              <button className={styles.logout} type="button" onClick={handleLogout}>
+                Sair
+              </button>
+            </div>
+          ) : (
+            <NavLink
+              to="/login"
+              className={({ isActive }) =>
+                isActive ? `${styles.accountLink} ${styles.active}` : styles.accountLink
+              }
+            >
+              Conta
+            </NavLink>
+          )}
+        </div>
       </div>
     </nav>
   );

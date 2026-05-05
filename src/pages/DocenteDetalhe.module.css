@@ -1,5 +1,5 @@
 .page {
-  background: #fff;
+  background: var(--page-bg);
   min-height: calc(100vh - 64px);
 }
 
@@ -84,7 +84,7 @@
 }
 
 .placeholderText code {
-  background: #fff;
+  background: var(--panel);
   border: 1px solid var(--border);
   padding: 0.1em 0.4em;
   border-radius: 4px;

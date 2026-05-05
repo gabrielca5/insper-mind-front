@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { disciplinaService } from '../services/disciplinaService';
-import { materialService } from '../services/materialService';
+import { materialService, SUPPORTED_MATERIAL_TYPES } from '../services/materialService';
 import { docenteService } from '../services/docenteService';
+import { useAuth } from '../hooks/useAuth';
+import { FormModal } from '../components/FormModal';
 import { MaterialCard } from '../components/MaterialCard';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LoadingSpinner, EmptyState } from '../components/UI';
@@ -10,12 +12,15 @@ import styles from './DisciplinaDetalhe.module.css';
 
 export function DisciplinaDetalhe() {
   const { id } = useParams();
+  const auth = useAuth();
   const [disciplina, setDisciplina] = useState(null);
   const [materiais, setMateriais] = useState([]);
   const [docente, setDocente] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState('');
 
-  useEffect(() => {
+  const loadData = () => {
+    setLoading(true);
     disciplinaService.getById(id).then(async (d) => {
       setDisciplina(d);
       const mats = await materialService.listByDisciplina(id);
@@ -26,7 +31,45 @@ export function DisciplinaDetalhe() {
       }
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  const createFields = [
+    { name: 'titulo', label: 'Título', required: true },
+    { name: 'descricao', label: 'Descrição', type: 'textarea' },
+    { name: 'link', label: 'Link', type: 'url', required: true },
+    {
+      name: 'tipo',
+      label: 'Tipo',
+      type: 'select',
+      required: true,
+      defaultValue: SUPPORTED_MATERIAL_TYPES[0],
+      options: SUPPORTED_MATERIAL_TYPES.map((tipo) => ({
+        value: tipo,
+        label: tipo,
+      })),
+    },
+    { name: 'cursoId', label: 'Curso ID', type: 'number', required: true, defaultValue: disciplina?.cursoId ?? 1 },
+    {
+      name: 'emailUsuario',
+      label: 'Email do usuário',
+      type: 'email',
+      required: true,
+      disabled: Boolean(auth?.email),
+      defaultValue: auth?.email ?? '',
+    },
+  ];
+
+  const handleCreateMaterial = async (payload) => {
+    const material = await materialService.save(payload);
+    setMessage('Material enviado.');
+    loadData();
+    return material;
+  };
 
   if (loading) return <LoadingSpinner message="Carregando disciplina..." />;
   if (!disciplina) return (
@@ -63,9 +106,21 @@ export function DisciplinaDetalhe() {
         )}
 
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            Materiais <span className={styles.count}>{materiais.length}</span>
-          </h2>
+          <div className={styles.sectionHead}>
+            <h2 className={styles.sectionTitle}>
+              Materiais <span className={styles.count}>{materiais.length}</span>
+            </h2>
+            <FormModal
+              title="Enviar material"
+              triggerLabel="Enviar material"
+              submitLabel="POST /material"
+              fields={createFields}
+              disabled={!auth?.email}
+              disabledTitle="Faça login para enviar material"
+              onSubmit={handleCreateMaterial}
+            />
+          </div>
+          {message && <p className={styles.message}>{message}</p>}
           {materiais.length === 0 ? (
             <EmptyState
               icon="📦"

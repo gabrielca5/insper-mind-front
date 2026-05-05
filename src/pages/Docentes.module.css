@@ -1,5 +1,5 @@
 .page {
-  background: #fff;
+  background: var(--page-bg);
   min-height: calc(100vh - 64px);
 }
 
@@ -45,7 +45,7 @@
 .pageBtn {
   padding: 0.45rem 1rem;
   border: 1.5px solid var(--border);
-  background: #fff;
+  background: var(--panel);
   border-radius: 8px;
   font-size: 0.825rem;
   font-weight: 600;

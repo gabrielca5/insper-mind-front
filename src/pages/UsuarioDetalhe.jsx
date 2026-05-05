@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { usuarioService } from '../services/usuarioService';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { LoadingSpinner, EmptyState } from '../components/UI';
@@ -58,21 +58,18 @@ export function UsuarioDetalhe() {
           </div>
         </div>
 
-        {/* Favoritos e comentários: aguardando implementação do backend */}
         <div className={styles.futureSections}>
           {[
-            { icon: '⭐', label: 'Favoritos', endpoint: '/favorito?usuarioEmail' },
-            { icon: '💬', label: 'Comentários', endpoint: '/comentario?usuarioEmail' },
+            { icon: '⭐', label: 'Favoritos', to: '/favoritos' },
+            { icon: '💬', label: 'Comentários', to: '/comentarios' },
           ].map((s) => (
-            <div key={s.label} className={styles.futureCard}>
+            <Link key={s.label} to={s.to} className={styles.futureCard}>
               <span className={styles.futureIcon}>{s.icon}</span>
               <div>
                 <p className={styles.futureTitle}>{s.label}</p>
-                <p className={styles.futureSub}>
-                  Disponível quando <code>{s.endpoint}</code> for implementado.
-                </p>
+                <p className={styles.futureSub}>Abrir tela de {s.label.toLowerCase()}.</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

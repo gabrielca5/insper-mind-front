@@ -1,13 +1,21 @@
 import api from './api';
+import { cachedGet, createCacheKey, invalidateCache } from './cacheService';
 import { buildPageParams, encodePath, normalizeList, normalizePage } from './serviceUtils';
+
+const CACHE_RESOURCE = 'semestre';
+const CACHE_SCOPE = `${CACHE_RESOURCE}:`;
 
 export const semestreService = {
   async list(params = {}) {
     try {
-      const response = await api.get('/semestre', {
-        params: buildPageParams(params),
+      const requestParams = buildPageParams(params);
+      const data = await cachedGet(createCacheKey(CACHE_RESOURCE, 'list', requestParams), async () => {
+        const response = await api.get('/semestre', {
+          params: requestParams,
+        });
+        return response.data;
       });
-      return normalizeList(response.data);
+      return normalizeList(data);
     } catch {
       return [];
     }
@@ -15,10 +23,14 @@ export const semestreService = {
 
   async listPage(page = 0, size = 20, sort) {
     try {
-      const response = await api.get('/semestre', {
-        params: buildPageParams(page, size, sort),
+      const requestParams = buildPageParams(page, size, sort);
+      const data = await cachedGet(createCacheKey(CACHE_RESOURCE, 'page', requestParams), async () => {
+        const response = await api.get('/semestre', {
+          params: requestParams,
+        });
+        return response.data;
       });
-      return normalizePage(response.data);
+      return normalizePage(data);
     } catch {
       return normalizePage(null);
     }
@@ -26,8 +38,10 @@ export const semestreService = {
 
   async getById(id) {
     try {
-      const response = await api.get(`/semestre/${encodePath(id)}`);
-      return response.data;
+      return await cachedGet(createCacheKey(CACHE_RESOURCE, 'item', { id }), async () => {
+        const response = await api.get(`/semestre/${encodePath(id)}`);
+        return response.data;
+      });
     } catch {
       return null;
     }
@@ -35,15 +49,18 @@ export const semestreService = {
 
   async save(dto) {
     const response = await api.post('/semestre', dto);
+    invalidateCache(CACHE_SCOPE);
     return response.data;
   },
 
   async update(id, dto) {
     const response = await api.put(`/semestre/${encodePath(id)}`, dto);
+    invalidateCache(CACHE_SCOPE);
     return response.data;
   },
 
   async deleteById(id) {
     await api.delete(`/semestre/${encodePath(id)}`);
+    invalidateCache(CACHE_SCOPE);
   },
 };

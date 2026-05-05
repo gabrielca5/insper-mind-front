@@ -6,7 +6,8 @@
 .hero {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #EEF2FF 0%, #F8FAFF 60%, #F0FDF4 100%);
+  background: var(--hero-bg);
+  border-bottom: 1px solid var(--border);
   padding: 5rem 2rem;
   text-align: center;
 }
@@ -54,31 +55,16 @@
   margin: 0 auto;
 }
 
-/* Blobs */
 .heroBg {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .blob1 {
-  position: absolute;
-  width: 360px;
-  height: 360px;
-  top: -80px;
-  right: -60px;
-  background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
-  border-radius: 50%;
+  display: none;
 }
 
 .blob2 {
-  position: absolute;
-  width: 280px;
-  height: 280px;
-  bottom: -60px;
-  left: -40px;
-  background: radial-gradient(circle, rgba(22,163,74,0.1) 0%, transparent 70%);
-  border-radius: 50%;
+  display: none;
 }
 
 /* Sections */
@@ -125,7 +111,7 @@
 }
 
 .featureCard {
-  background: #fff;
+  background: var(--panel);
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;

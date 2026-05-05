@@ -2,6 +2,57 @@
 
 /* ── Design Tokens ── */
 :root {
+  color-scheme: dark;
+  --native-color-scheme: dark;
+
+  --accent:        #9CA3FF;
+  --accent-light:  rgba(156, 163, 255, 0.16);
+  --accent-hover:  #C4B5FD;
+
+  --text-primary:   #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #94A3B8;
+
+  --page-bg: #0A0F18;
+  --surface: #111827;
+  --panel:   #172033;
+  --panel-soft: #1D283C;
+  --border:  #2D3A4E;
+
+  --danger: #FCA5A5;
+  --danger-strong: #F87171;
+  --danger-surface: rgba(248, 113, 113, 0.14);
+  --danger-border: rgba(248, 113, 113, 0.34);
+
+  --success: #6EE7B7;
+  --success-strong: #34D399;
+  --success-surface: rgba(52, 211, 153, 0.14);
+  --success-border: rgba(52, 211, 153, 0.32);
+
+  --focus-ring: 0 0 0 3px rgba(156, 163, 255, 0.16);
+  --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --nav-bg: rgba(10, 15, 24, 0.88);
+  --hero-bg: linear-gradient(135deg, var(--page-bg) 0%, var(--surface) 56%, #0D201B 100%);
+  --not-found-bg: linear-gradient(135deg, var(--page-bg) 0%, var(--surface) 48%, #0D201B 100%);
+  --code-panel-bg: #0B1220;
+  --code-panel-text: #CBD5E1;
+  --course-1-bg: #172033;
+  --course-1-accent: #9CA3FF;
+  --course-2-bg: #13251F;
+  --course-2-accent: #6EE7B7;
+  --course-fallback-bg: #172033;
+  --course-fallback-accent: #CBD5E1;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+  --native-color-scheme: light;
+
   --accent:        #4F46E5;
   --accent-light:  #EEF2FF;
   --accent-hover:  #4338CA;
@@ -10,12 +61,36 @@
   --text-secondary: #4B5563;
   --text-muted:     #9CA3AF;
 
-  --surface:  #F9FAFB;
-  --border:   #E5E7EB;
+  --page-bg: #FFFFFF;
+  --surface: #F9FAFB;
+  --panel:   #FFFFFF;
+  --panel-soft: #F8FAFC;
+  --border:  #E5E7EB;
 
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --danger: #991B1B;
+  --danger-strong: #B91C1C;
+  --danger-surface: #FEE2E2;
+  --danger-border: #FECACA;
+
+  --success: #047857;
+  --success-strong: #047857;
+  --success-surface: #ECFDF5;
+  --success-border: rgba(4, 120, 87, 0.24);
+
+  --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.12);
+  --shadow-sm: 0 6px 20px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --hero-bg: linear-gradient(135deg, #EEF2FF 0%, #F8FAFF 60%, #F0FDF4 100%);
+  --not-found-bg: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 42%, #ECFDF5 100%);
+  --code-panel-bg: #0F172A;
+  --code-panel-text: #CBD5E1;
+  --course-1-bg: #EEF2FF;
+  --course-1-accent: #4F46E5;
+  --course-2-bg: #F0FDF4;
+  --course-2-accent: #16A34A;
+  --course-fallback-bg: #F8FAFC;
+  --course-fallback-accent: #334155;
 }
 
 /* ── Reset ── */
@@ -34,9 +109,14 @@ html {
 
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
-  background: #fff;
+  background: var(--page-bg);
   color: var(--text-primary);
   line-height: 1.5;
+  min-height: 100vh;
+}
+
+main {
+  min-height: calc(100vh - 72px);
 }
 
 a {
@@ -46,6 +126,26 @@ a {
 
 button {
   font-family: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  color-scheme: var(--native-color-scheme);
+}
+
+input,
+select,
+textarea {
+  background-color: var(--panel-soft);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
 }
 
 img {
