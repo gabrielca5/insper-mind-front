@@ -35,7 +35,6 @@ export function Navbar() {
           {auth && (
             <>
               <li><NavLink to="/materiais" className={({ isActive }) => isActive ? styles.active : ''}>Materiais</NavLink></li>
-              <li><NavLink to="/comentarios" className={({ isActive }) => isActive ? styles.active : ''}>Comentários</NavLink></li>
               <li><NavLink to="/favoritos" className={({ isActive }) => isActive ? styles.active : ''}>Favoritos</NavLink></li>
               <li><NavLink to="/docentes" className={({ isActive }) => isActive ? styles.active : ''}>Docentes</NavLink></li>
               <li><NavLink to="/usuarios" className={({ isActive }) => isActive ? styles.active : ''}>Usuários</NavLink></li>

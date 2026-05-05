@@ -41,8 +41,13 @@ function materialFields(cursos, material = {}) {
   ];
 }
 
-function commentFields(auth, comentario = {}) {
+function commentFields(auth, materialId, comentario = {}) {
   return [
+    {
+      name: 'materialId',
+      type: 'hidden',
+      defaultValue: Number(materialId),
+    },
     {
       name: 'comentario',
       label: 'Comentário',
@@ -91,12 +96,12 @@ export function MaterialDetalhe() {
     setLoading(true);
     const [mat, comments, cursoData] = await Promise.all([
       materialService.getById(id),
-      comentarioService.listPage(0, 20),
+      comentarioService.listByMaterial(id),
       cursoService.list(),
     ]);
 
     setMaterial(mat);
-    setComentarios(comments.items ?? []);
+    setComentarios(comments ?? []);
     setCursos(cursoData);
 
     if (auth?.email) {
@@ -115,7 +120,7 @@ export function MaterialDetalhe() {
   }, [loadData]);
 
   const editMaterialFields = useMemo(() => materialFields(cursos, material ?? {}), [cursos, material]);
-  const newCommentFields = useMemo(() => commentFields(auth), [auth]);
+  const newCommentFields = useMemo(() => commentFields(auth, id), [auth, id]);
   const updateCommentFields = useMemo(() => editCommentFields(editingComment ?? {}), [editingComment]);
 
   const handleFavorite = async () => {
@@ -231,7 +236,7 @@ export function MaterialDetalhe() {
 
         <section className={styles.section}>
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>Comentários</h2>
+            <h2 className={styles.sectionTitle}>Comentários deste material</h2>
             <FormModal
               title="Publicar comentário"
               triggerLabel="Publicar comentário"

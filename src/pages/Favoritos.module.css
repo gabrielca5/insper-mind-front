@@ -72,8 +72,7 @@
   font-size: 1rem;
 }
 
-.actions,
-.pagination {
+.actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
@@ -118,15 +117,6 @@
   margin: 0 0 1rem;
   font-size: 0.85rem;
   font-weight: 800;
-}
-
-.pagination {
-  justify-content: center;
-  align-items: center;
-  margin-top: 1.25rem;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 700;
 }
 
 @media (max-width: 720px) {
