@@ -45,7 +45,7 @@ export function Home() {
         {loading ? (
           <LoadingSpinner message="Carregando cursos..." />
         ) : cursos.length === 0 ? (
-          <EmptyState icon="📚" title="Nenhum curso encontrado" subtitle="Aguarde a API estar disponível." />
+          <EmptyState icon="" title="Nenhum curso encontrado" subtitle="Aguarde a API estar disponível." />
         ) : (
           <div className={styles.grid}>
             {cursos.map((curso) => (
@@ -59,9 +59,9 @@ export function Home() {
       <section className={styles.section}>
         <div className={styles.featureGrid}>
           {[
-            { icon: '📖', title: 'Materiais', desc: 'Acesse PDFs, vídeos, slides e artigos de cada disciplina.' },
-            { icon: '👩‍🏫', title: 'Docentes', desc: 'Conheça os professores e suas áreas de atuação.' },
-            { icon: '⭐', title: 'Favoritos', desc: 'Salve seus conteúdos preferidos para acesso rápido.' },
+            { icon: '', title: 'Materiais', desc: 'Acesse PDFs, vídeos, slides e artigos de cada disciplina.' },
+            { icon: '', title: 'Docentes', desc: 'Conheça os professores e suas áreas de atuação.' },
+            { icon: '', title: 'Favoritos', desc: 'Salve seus conteúdos preferidos para acesso rápido.' },
           ].map((f) => (
             <div key={f.title} className={styles.featureCard}>
               <span className={styles.featureIcon}>{f.icon}</span>
