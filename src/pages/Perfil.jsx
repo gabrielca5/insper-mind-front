@@ -91,9 +91,6 @@ export function Perfil() {
             <p className={styles.sub}>{usuario?.email ?? auth.email}</p>
           </div>
           <div className={styles.actions}>
-            <button className={styles.secondaryBtn} type="button" onClick={loadUsuario}>
-              Buscar usuário
-            </button>
             <FormModal
               title="Editar perfil"
               triggerLabel="Salvar perfil"
