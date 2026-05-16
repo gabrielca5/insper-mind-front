@@ -2,6 +2,15 @@ node_modules
 dist
 .env
 .env.local
+.env.*.local
 .DS_Store
 __pycache__/
 *.py[cod]
+.next/
+out/
+build/
+*.log
+.idea/
+.vscode/
+.sixth/
+
