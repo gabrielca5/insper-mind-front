@@ -1,4 +1,4 @@
-const DEFAULT_API_TARGET = 'http://3.237.223.11:8080';
+const DEFAULT_API_TARGET = process.env.API_PROXY_TARGET || 'http://3.237.223.11:8080';
 
 function readRequestBody(req) {
   return new Promise((resolve, reject) => {

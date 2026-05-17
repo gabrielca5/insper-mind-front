@@ -126,8 +126,7 @@ export default function MaterialDetailPage() {
                     </a>
                   )}
                   {material.arquivo && (
-                    <a href={`http://3.237.223.11:8080/uploads/${material.arquivo}`} target="_blank" rel="noopener noreferrer">
-                      <Button variant="secondary">
+                  <a href={`/api/uploads/${material.arquivo}`} target="_blank" rel="noopener noreferrer">                      <Button variant="secondary">
                         <Download className="h-4 w-4 mr-2" /> Download
                       </Button>
                     </a>
